@@ -43,7 +43,7 @@ func readPrivateKey(from path: String) throws -> SecKey? {
     return privateKey
 }
 
-func readPublicKey(from path: String) throws -> SecKey? {
+func readPublicKey(from path: String) throws -> SecKey {
     let url = URL(fileURLWithPath: path)
     let keyData = try Data(contentsOf: url)
     guard var keyString = String(data: keyData, encoding: .utf8) else {

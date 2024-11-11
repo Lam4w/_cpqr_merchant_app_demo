@@ -355,6 +355,18 @@ class CheckoutViewModel: ObservableObject {
         
         let body = PurchaseRequest(payload: PurchaseRequestPayload(card: card, payment: payment, device: device))
         
+        let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem")
+        
+        let devicePubkey: SecKey = try! readPublicKey(from: pathJwePub)
+        
+        let cardJson = jsonString(from: card)!
+        print("card json:" + cardJson)
+        
+        let strJwe = encryptJWE(originalData: cardJson, publicKey: devicePubkey)!
+        print("string jwe" + strJwe)
+        
+//        let strJws = signerJWS(strData: strJwe, privateKey: SecKey, keyID: <#T##String#>)
+        
         self.isLoading = true
         
         ServiceCall.post(parameter: body, path: Path.PURCHASE) { responseObj in

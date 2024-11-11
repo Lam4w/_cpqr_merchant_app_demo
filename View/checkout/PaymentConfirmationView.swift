@@ -149,7 +149,7 @@ struct PaymentConfirmationView: View {
                     }
                     
                     RoundedButton(title: "Xác nhận") {
-                        checkoutVM.serviceCallInitPayment()
+                        checkoutVM.createPayment()
                     }
                 }
             }
