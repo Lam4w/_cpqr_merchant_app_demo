@@ -7,12 +7,42 @@
 
 import Foundation
 
-func jsonString<T: Codable>(from object: T) -> String? {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = .prettyPrinted
-    if let jsonData = try? encoder.encode(object) {
-        return String(data: jsonData, encoding: .utf8)
+class Utils {
+    class func jsonString<T: Codable>(from object: T) -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        if let jsonData = try? encoder.encode(object) {
+            return String(data: jsonData, encoding: .utf8)
+        }
+        
+        return nil
     }
-    
-    return nil
+
+    class func getTransmisDateTime() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMddHHmmss"
+        let date = Date()
+        let dateNow = dateFormatter.string(from: date)
+        
+        return dateNow
+    }
+
+    class func getTimeLocalTrans() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HHmmss"
+        let date = Date()
+        let dateNow = dateFormatter.string(from: date)
+        
+        return dateNow
+    }
+
+    class func getDateLocalTrans() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMdd"
+        let date = Date()
+        let dateNow = dateFormatter.string(from: date)
+        
+        return dateNow
+    }
 }
+
