@@ -156,3 +156,40 @@ func genSignature(plainText: String, privateKey: SecKey) throws -> String {
     
     return (signature as Data).base64EncodedString()
 }
+
+func loadPublicKey(from filePath: String) -> SecKey? {
+    do {
+        // Load the .pem file contents as a string
+        let pemString = try String(contentsOfFile: filePath, encoding: .utf8)
+        
+        // Remove the header and footer
+        let keyString = pemString
+            .replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----", with: "")
+            .replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
+            .replacingOccurrences(of: "\n", with: "")
+        
+        // Decode the Base64 string to raw key data
+        guard let keyData = Data(base64Encoded: keyString) else {
+            print("Failed to decode base64")
+            return nil
+        }
+        
+        // Define attributes for a public key
+        let attributes: [String: Any] = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
+            kSecAttrKeySizeInBits as String: 2048
+        ]
+        
+        // Create a SecKey instance from the raw key data
+        guard let publicKey = SecKeyCreateWithData(keyData as CFData, attributes as CFDictionary, nil) else {
+            print("Failed to create public key")
+            return nil
+        }
+        
+        return publicKey
+    } catch {
+        print("Error reading .pem file: \(error)")
+        return nil
+    }
+}
