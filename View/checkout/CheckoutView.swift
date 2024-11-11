@@ -1,0 +1,118 @@
+//
+//  BetaCheckoutView.swift
+//  cpqr_merchant_demo
+//
+//  Created by Macbook on 11/09/2024.
+//
+
+import SwiftUI
+import SwiftUIFontIcon
+import CodeScanner
+
+struct CheckoutView: View {
+    @StateObject var checkoutVM = CheckoutViewModel.shared
+
+    var body: some View {
+        VStack{
+            VStack{
+                Text("Tạo đơn hàng")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(.black)
+                    .padding(.bottom, 5)
+                
+                Text("Vui lòng điền đầy đủ thông tin")
+                    .font(.title3)
+                    .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(.black)
+                
+                InputField(title: "MarchantID", placeHolder: "Nhập số tiền", txt: $checkoutVM.total)
+                
+                VStack{
+                    HStack {
+                        Text("Phương thức thanh toán")
+                            .font(.title3)
+                            .foregroundColor(.black)
+                            .frame(height: 46)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "qrcode.viewfinder")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 20)
+                    }
+                    Divider()
+                }
+                
+                NavigationLink{
+                    
+                } label: {
+                    HStack{
+                        Spacer()
+                        
+                        FontIcon.text(.ionicon(code: .md_pricetag),fontsize: 23, color: .blue)
+                            .padding(5)
+                        
+                        Text("Thêm nội dung thanh toán")
+                            .foregroundColor(.black.opacity(0.6))
+                            .underline()
+                    }
+                }
+            }
+            
+            Spacer()
+//                .frame(height: 280)
+            VStack{
+                VStack {
+                    Text("Bằng cách tiếp tục, bạn đồng ý với")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack{
+                        Text("Điều khoản dịch vụ")
+                            .font(.subheadline)
+                            .foregroundColor(.black)
+                        
+                        Text("và")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        
+                        Text("Chính sách bảo mật.")
+                            .font(.subheadline)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding(.vertical, .screenWidth * 0.03)
+                
+                RoundedButton(title: "Quét mã QR") {
+//                    checkoutVM.isShowScanner = true
+//                    scannerVM.parserQR()
+                    checkoutVM.showTransactionConfirmation = true
+                }
+                .padding(.bottom, .bottomInsets + 80)
+            }
+            
+        }
+        .padding(.top, .topInsets)
+        .padding(.horizontal, 20)
+        .frame(width: .screenWidth, height: .screenHeight)
+        .background(.white)
+        .sheet(isPresented: $checkoutVM.isShowScanner) {
+            CodeScannerView(codeTypes: [.qr], simulatedData: "test data", completion: checkoutVM.handleScan)
+        }
+        .background(NavigationLink(destination: PaymentConfirmationView(), isActive: $checkoutVM.showTransactionConfirmation  , label: {
+            EmptyView()
+        }) )
+        .alert(isPresented: $checkoutVM.showError) {
+            Alert(title: Text("Error"), message: Text(checkoutVM.errorMessage), dismissButton: .default(Text("OK")))
+        }
+    }
+}
+
+#Preview {
+    CheckoutView()
+}
