@@ -473,7 +473,38 @@ class CheckoutViewModel: ObservableObject {
         }
     }
     
-    
+    func handleError(message: String) {
+        print(message)
+        self.showError = true
+        self.errorMessage = message
+    }
+
+
+    func handleServiceResponse(_ responseObj: Data?) {
+        guard let responseData = responseObj else {
+            handleError(message: "Empty response data")
+            return
+        }
+        
+        let decoder = JSONDecoder()
+        do {
+            self.purchaseResponse = try decodeResponse(from: responseData)
+            if let result = self.purchaseResponse?.payload.result {
+                print("Result code: \(result.code)")
+                print("Message: \(result.message)")
+                self.showPaymentAccepted = true
+            }
+        } catch {
+            handleError(message: "Decoding error: \(error)")
+        } finally {
+            self.isLoading = false
+        }
+    }
+
+    func decodeResponse(from data: Data) throws -> PurchaseResponse {
+        let decoder = JSONDecoder()
+        return try decoder.decode(PurchaseResponse.self, from: data)
+    }
 }
 
 extension String {
@@ -485,7 +516,3 @@ extension String {
 }
 
 
-private func decodeResponse(from data: Data) throws -> PurchaseResponse {
-    let decoder = JSONDecoder()
-    return try decoder.decode(PurchaseResponse.self, from: data)
-}
