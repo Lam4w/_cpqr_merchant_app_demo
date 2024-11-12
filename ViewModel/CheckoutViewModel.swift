@@ -325,10 +325,10 @@ class CheckoutViewModel: ObservableObject {
                 "payment": [
                     "pro_code": "000000",
                     "trans_amount": "000000700000",
-                    "transmis_date_time": DateConverter.getTransmisDateTime(),
+                    "transmis_date_time": Utils.getTransmisDateTime(),
                     "system_trace_no": "111111",
-                    "time_local_trans": DateConverter.getTimeLocalTrans(),
-                    "date_local_trans": DateConverter.getDateLocalTrans(),
+                    "time_local_trans": Utils.getTimeLocalTrans(),
+                    "date_local_trans": Utils.getDateLocalTrans(),
                     "retrieval_refer_no": "120010123456",
                     "trans_currency_code": "704",
                     "service_code": "CPQR_PC"
@@ -348,7 +348,7 @@ class CheckoutViewModel: ObservableObject {
     
     func createPayment() {
         let card = CardInfo(token: "123123123")
-        let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: DateConverter.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: DateConverter.getTimeLocalTrans(), dateLocalTrans: DateConverter.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
+        let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
         let device = DeviceInfo(merchantType: "4412", acceptInstitutionCode: "9004401", pointServiceEntryCode: "00", pointServiceConCode: "06450645", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
                 
         guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem"),
