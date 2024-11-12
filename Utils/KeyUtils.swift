@@ -9,22 +9,27 @@ import Foundation
 import Security
 import CryptoKit
 import JOSESwift
+import SwiftyRSA
 
 class KeyUtils {
-    func readPrivateKey(from path: String) throws -> SecKey? {
+    class func readPrivateKey(from path: String) throws -> SecKey? {
         let url = URL(fileURLWithPath: path)
         let keyData = try Data(contentsOf: url)
         guard var keyString = String(data: keyData, encoding: .utf8) else {
+            print("Error: Invalid file encoding")
             throw NSError(domain: "Invalid file encoding", code: -1, userInfo: nil)
         }
         
+        print(keyString)
+        
         // Remove PEM headers and newlines
         keyString = keyString
-            .replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "")
-            .replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "")
+            .replacingOccurrences(of: "-----BEGIN RSA PRIVATE KEY-----", with: "")
+            .replacingOccurrences(of: "-----END RSA PRIVATE KEY-----", with: "")
             .replacingOccurrences(of: "\n", with: "")
         
         guard let decodedData = Data(base64Encoded: keyString) else {
+            print("Error: base64 decoding failed")
             throw NSError(domain: "Base64 decoding failed", code: -2, userInfo: nil)
         }
         
@@ -32,7 +37,7 @@ class KeyUtils {
         let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
             kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
-            kSecAttrKeySizeInBits as String: 2048
+            kSecAttrKeySizeInBits as String: 4096
         ]
         
         // Create the key using the Security framework
@@ -44,46 +49,45 @@ class KeyUtils {
         return privateKey
     }
 
-    func readPublicKey(from path: String) throws -> SecKey {
+    class func readPublicKey(from path: String) throws -> SecKey? {
         let url = URL(fileURLWithPath: path)
         let keyData = try Data(contentsOf: url)
         guard var keyString = String(data: keyData, encoding: .utf8) else {
+            print("Error: Invalid file encoding")
             throw NSError(domain: "Invalid file encoding", code: -1, userInfo: nil)
         }
         
+        print(keyString)
+        
         // Remove PEM headers and newlines
         keyString = keyString
-            .replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----", with: "")
-            .replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
+            .replacingOccurrences(of: "-----BEGIN CERTIFICATE-----", with: "")
+            .replacingOccurrences(of: "-----END CERTIFICATE-----", with: "")
             .replacingOccurrences(of: "\n", with: "")
             // .split(separator: "\n").joined()
         
+        print("Key string after formatted: \(keyString)")
+
         guard let decodedData = Data(base64Encoded: keyString) else {
+            print("Error: base64 decoding failed")
             throw NSError(domain: "Base64 decoding failed", code: -2, userInfo: nil)
         }
         
-        // Define attributes for the key
-        let attributes: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
-            kSecAttrKeySizeInBits as String: 2048
-        ]
+        print("Decoded data: \(decodedData)")
         
-        // Create the key using the Security framework
         var error: Unmanaged<CFError>?
-        guard let publicKey = SecKeyCreateWithData(decodedData as CFData, attributes as CFDictionary, &error) else {
+        guard let cert = SecCertificateCreateWithData(nil, decodedData as CFData) else {
+            print("Can not create cert from data")
             throw error!.takeRetainedValue() as Error
         }
         
-        return publicKey
+        let pubKey = SecCertificateCopyKey(cert)!
+        
+        return pubKey
     }
 
-    func encryptJWE(originalData: String, publicKey: SecKey) -> String? {
+    class func encryptJWE(originalData: String, publicKey: SecKey) -> String? {
         do {
-            // Generate a Content Encryption Key (CEK) for AES encryption
-            let cek = SymmetricKey(size: .bits256)
-            let cekData = cek.withUnsafeBytes { Data(Array($0)) }
-            
             // Set up JWE Header with the appropriate algorithm and encryption method
             let header = JWEHeader(keyManagementAlgorithm: .RSA1_5, contentEncryptionAlgorithm: .A256GCM)
             
@@ -110,11 +114,11 @@ class KeyUtils {
         }
     }
 
-    func signerJWS(strData: String, privateKey: SecKey, keyID: String) -> String? {
+    class func signerJWS(strData: String, privateKey: SecKey) -> String? {
         do {
             // Set up JWS Header with the RS512 algorithm and key ID
             var header = JWSHeader(algorithm: .RS512)
-            header.kid = keyID
+            header.kid = "Napasqrpg2024"
             
             // Convert the data to Data format
             guard let payloadData = strData.data(using: .utf8) else {
@@ -139,7 +143,7 @@ class KeyUtils {
         }
     }
 
-    func genSignature(plainText: String, privateKey: SecKey) throws -> String {
+    class func genSignature(plainText: String, privateKey: SecKey) throws -> String {
         guard let data = plainText.data(using: .utf8) else {
             throw NSError(domain: "Invalid input encoding", code: 0, userInfo: nil)
         }
@@ -159,7 +163,7 @@ class KeyUtils {
         return (signature as Data).base64EncodedString()
     }
 
-    func loadPublicKey(from filePath: String) -> SecKey? {
+    class func loadPublicKey(from filePath: String) -> SecKey? {
         do {
             // Load the .pem file contents as a string
             let pemString = try String(contentsOfFile: filePath, encoding: .utf8)

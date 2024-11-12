@@ -161,7 +161,6 @@ class CheckoutViewModel: ObservableObject {
             }
         }
     }
-
     
     func decode(_ inputTLV: String) -> [String: Any] {
         var result: [String: Any] = [:]
@@ -351,30 +350,103 @@ class CheckoutViewModel: ObservableObject {
         let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
         let device = DeviceInfo(merchantType: "4412", acceptInstitutionCode: "9004401", pointServiceEntryCode: "00", pointServiceConCode: "06450645", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
                 
-        guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem"),
-            let devicePubkey = try? readPublicKey(from: pathJwePub) else {
-            print("Error: Public key not found or invalid.")
+        guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem") else {
+            print("Error: Can not get path of public key.")
             self.showError = true
             self.errorMessage = "Public key error"
             return
         }
+        
+        print("jwe cart path: \(pathJwePub)")
+        
+        guard let serverPubKey = try? KeyUtils.readPublicKey(from: pathJwePub) else {
+            print("Error: Can not read public key from cert")
+            self.showError = true
+            self.errorMessage = "Public key error"
+            return
+        }
+        
+        print("key: \(String(describing: serverPubKey))")
 
-        guard let cardJson = jsonString(from: card) else {
+        guard let cardJson = Utils.jsonString(from: card) else {
             print("Error: Failed to encode card data to JSON.")
             self.showError = true
             self.errorMessage = "JSON encoding error"
             return
         }
+        
+        print("Card json: \(cardJson)")
 
-        guard let strJwe = encryptJWE(originalData: cardJson, publicKey: devicePubkey) else {
+        guard let strJwe = KeyUtils.encryptJWE(originalData: cardJson, publicKey: serverPubKey) else {
             print("Error: Failed to encrypt JWE.")
             self.showError = true
             self.errorMessage = "Encryption error"
             return
         }
-
-        let body = PurchaseRequest(payload: PurchaseRequestPayload(card: strJwe, payment: payment, device: device))
         
+        print("string jwe: \(strJwe)")
+        
+        guard let pathJwsPri = Bundle.main.path(forResource: "PK_JWS_DEVICE", ofType: "key") else {
+            print("Error: Can not get path of private key.")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        print("jws key path: \(pathJwsPri)")
+        
+        guard let devicePrikey = try? KeyUtils.readPrivateKey(from: pathJwsPri) else {
+            print("Error: Can not read private key from path")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        guard let strJws = KeyUtils.signerJWS(strData: strJwe, privateKey: devicePrikey) else {
+            print("Error: Failed to encrypt JWE.")
+            self.showError = true
+            self.errorMessage = "Encryption error"
+            return
+        }
+        
+        print("string jws: \(strJws)")
+        
+        guard let pathSigPri = Bundle.main.path(forResource: "PK_SIG_DEVICE", ofType: "key") else {
+            print("Error: Can not get path of private key.")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        print("jws key path: \(pathJwsPri)")
+        
+        guard let devicePriSig = try? KeyUtils.readPrivateKey(from: pathSigPri) else {
+            print("Error: Can not read private key from path")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        let requestPayload = PurchaseRequestPayload(card: strJws, payment: payment, device: device)
+        
+        guard let payloadJson = Utils.jsonString(from: requestPayload) else {
+            print("Error: Failed to encode payload data to JSON.")
+            self.showError = true
+            self.errorMessage = "JSON encoding error"
+            return
+        }
+        
+        guard let strSignatureDevice = try? KeyUtils.genSignature(plainText: payloadJson, privateKey: devicePriSig) else {
+            print("Error: Can not generate signature")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        print("string signature: \(strSignatureDevice)")
+        
+        let body = PurchaseRequest(payload: PurchaseRequestPayload(card: strJws, payment: payment, device: device), signature: strSignatureDevice)
+      
         self.isLoading = true
         
         ServiceCall.post(parameter: body, path: Path.PURCHASE) { responseObj in
@@ -395,11 +467,13 @@ class CheckoutViewModel: ObservableObject {
             }
         } failure: { error in
             self.isLoading = false
-            print("Service call failed with error: \(error)")
+            print("Service call failed with error: \(String(describing: error))")
             self.errorMessage = "Network error"
             self.showError = true
         }
     }
+    
+    
 }
 
 extension String {

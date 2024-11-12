@@ -16,7 +16,7 @@ struct Loader: View {
             Circle()
                 .trim(from:0, to: 0.7)
                 .stroke(Color.blue, lineWidth: 4)
-                .frame(width: 60, height: 60)
+                .frame(width: 50, height: 50)
                 .rotationEffect(.degrees(isAnimating ? 360 : 0))
                 .foregroundColor(Color.blue)
                 .onAppear() {
