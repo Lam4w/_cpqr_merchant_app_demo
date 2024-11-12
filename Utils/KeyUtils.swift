@@ -167,6 +167,7 @@ func loadPublicKey(from filePath: String) -> SecKey? {
             .replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----", with: "")
             .replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
             .replacingOccurrences(of: "\n", with: "")
+            // .split(separator: "\n").joined()
         
         // Decode the Base64 string to raw key data
         guard let keyData = Data(base64Encoded: keyString) else {

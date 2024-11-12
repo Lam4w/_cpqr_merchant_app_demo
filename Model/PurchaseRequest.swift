@@ -12,7 +12,7 @@ struct PurchaseRequest: Codable {
 }
 
 struct PurchaseRequestPayload: Codable {
-    let card: CardInfo
+    let card: String
     let payment: RequestPaymentInfo
     let device: DeviceInfo
 }

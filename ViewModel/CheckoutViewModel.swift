@@ -114,7 +114,6 @@ class CheckoutViewModel: ObservableObject {
             tagName = Tag.getTagName(tag: secondTag)
         }            
         
-//        let actualTag = Tag.getTagName(tag: firstTag) != nil ? firstTag : secondTag
         var actualTag: String = ""
         if Tag.getTagName(tag: firstTag) != "Unknown" {
             actualTag = firstTag
@@ -295,7 +294,6 @@ class CheckoutViewModel: ObservableObject {
             if (!foundTags.contains(tag)) {
                 missingTags.append(tag)
             }
-//            missingTags[tag] = foundTags.contains(tag)
         }
         
         for tag in missingTags {
@@ -352,48 +350,56 @@ class CheckoutViewModel: ObservableObject {
         let card = CardInfo(token: "123123123")
         let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: DateConverter.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: DateConverter.getTimeLocalTrans(), dateLocalTrans: DateConverter.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
         let device = DeviceInfo(merchantType: "4412", acceptInstitutionCode: "9004401", pointServiceEntryCode: "00", pointServiceConCode: "06450645", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
-        
-        let body = PurchaseRequest(payload: PurchaseRequestPayload(card: card, payment: payment, device: device))
-        
-        let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem")
-        
-        let devicePubkey: SecKey = try! readPublicKey(from: pathJwePub)
-        
-        let cardJson = jsonString(from: card)!
-        print("card json:" + cardJson)
-        
-        let strJwe = encryptJWE(originalData: cardJson, publicKey: devicePubkey)!
-        print("string jwe" + strJwe)
-        
-//        let strJws = signerJWS(strData: strJwe, privateKey: SecKey, keyID: <#T##String#>)
+                
+        guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem"),
+            let devicePubkey = try? readPublicKey(from: pathJwePub) else {
+            print("Error: Public key not found or invalid.")
+            self.showError = true
+            self.errorMessage = "Public key error"
+            return
+        }
+
+        guard let cardJson = jsonString(from: card) else {
+            print("Error: Failed to encode card data to JSON.")
+            self.showError = true
+            self.errorMessage = "JSON encoding error"
+            return
+        }
+
+        guard let strJwe = encryptJWE(originalData: cardJson, publicKey: devicePubkey) else {
+            print("Error: Failed to encrypt JWE.")
+            self.showError = true
+            self.errorMessage = "Encryption error"
+            return
+        }
+
+        let body = PurchaseRequest(payload: PurchaseRequestPayload(card: strJwe, payment: payment, device: device))
         
         self.isLoading = true
         
         ServiceCall.post(parameter: body, path: Path.PURCHASE) { responseObj in
             if let responseData = responseObj {
                 let decoder = JSONDecoder()
-                
                 do {
-                    self.purchaseResponse = try decoder.decode(PurchaseResponse.self, from: responseData)
-                    
-                    print(self.purchaseResponse?.payload.result.code)
-                    print(self.purchaseResponse?.payload.result.message)
-                    
-                    self.isLoading = false
-                    self.showPaymentAccepted = true
-
+                    self.purchaseResponse = try decodeResponse(from: responseData)
+                    if let result = self.purchaseResponse?.payload.result {
+                        print("Result code: \(result.code)")
+                        print("Message: \(result.message)")
+                        self.showPaymentAccepted = true
+                    }
                 } catch {
-                    print("error in parsing")
+                    print("Decoding error: \(error)")
                     self.showError = true
-                    self.errorMessage = "Error"
-                }
+                    self.errorMessage = "Error parsing response"
+                }   
             }
         } failure: { error in
-            self.errorMessage = "Error"
+            self.isLoading = false
+            print("Service call failed with error: \(error)")
+            self.errorMessage = "Network error"
             self.showError = true
         }
     }
-
 }
 
 extension String {
@@ -402,4 +408,10 @@ extension String {
         let end = self.index(self.startIndex, offsetBy: r.upperBound)
         return String(self[start ..< end])
     }
+}
+
+
+private func decodeResponse(from data: Data) throws -> PurchaseResponse {
+    let decoder = JSONDecoder()
+    return try decoder.decode(PurchaseResponse.self, from: data)
 }
