@@ -90,7 +90,6 @@ struct CheckoutView: View {
                 
                 RoundedButton(title: "Quét mã QR") {
 //                    checkoutVM.isShowScanner = true
-//                    scannerVM.parserQR()
                     checkoutVM.showTransactionConfirmation = true
                 }
                 .padding(.bottom, .bottomInsets + 80)

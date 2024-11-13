@@ -19,7 +19,12 @@ struct LoadingView<Content>: View where Content: View {
                     .disabled(self.isShowing)
                     .blur(radius: self.isShowing ? 2 : 0)
                 
-
+                ActivityIndicatorView(
+                    isAnimating: self.isShowing,
+                    type: .circleStrokeSpin,
+                    size: 50
+                )
+                .frame(width: 50, height: 50)
             }
         }
     }

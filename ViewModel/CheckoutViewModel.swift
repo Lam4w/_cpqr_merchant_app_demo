@@ -62,24 +62,24 @@ class CheckoutViewModel: ObservableObject {
         case .success(let result):
             let details = result.string
             
-            // parsing result
-            if details.rangeOf(r: Range(0...6)) != "hQVDUFY" {
-                self.showError = true
-                self.errorMessage = "Invalid QR"
-            }
-            
-            if let hex = Converter.base64ToHex(str: details) {
+//            // parsing result
+//            if details.rangeOf(r: Range(0...6)) != "hQVDUFY" {
+//                self.showError = true
+//                self.errorMessage = "Invalid QR"
+//            }
+//            
+//            if let hex = Converter.base64ToHex(str: details) {
 //                self.transactions = []
 //                self.parseTransactions(tlvString: hex)
 //                self.checkMTags()
 //                let decodedEMV = self.decode(hex)
 //                self.createTransactions(from: decodedEMV)
 //                self.showTransactionConfirmation = true
-            } else {
-                print("Invalid")
-                self.showError = true
-                self.errorMessage = "Invalid QR"
-            }
+//            } else {
+//                print("Invalid")
+//                self.showError = true
+//                self.errorMessage = "Invalid QR"
+//            }
             
             // Sending payment
             self.token = details
@@ -313,7 +313,7 @@ class CheckoutViewModel: ObservableObject {
     func serviceCallCreatePayment() {
         let card = CardInfo(token: "123123123")
         let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
-        let device = DeviceInfo(merchantType: "4412", acceptInstitutionCode: "9004401", pointServiceEntryCode: "00", pointServiceConCode: "06450645", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
+        let device = DeviceInfo(merchantType: "4412", pointServiceEntryCode: "039", pointServiceConCode: "00", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
                 
         guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem") else {
             print("Error: Can not get path of public key.")
@@ -429,7 +429,6 @@ class CheckoutViewModel: ObservableObject {
         self.showError = true
         self.errorMessage = message
     }
-
 
     func handleServiceResponse(_ responseObj: Data?) {
         guard let responseData = responseObj else {
