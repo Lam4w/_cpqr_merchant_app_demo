@@ -162,7 +162,6 @@ class KeyUtils {
         }
     }
 
-
     class func genSignature(plainText: String, privateKey: SecKey) throws -> String {
         guard let data = plainText.data(using: .utf8) else {
             throw NSError(domain: "Invalid input encoding", code: 0, userInfo: nil)
@@ -183,35 +182,29 @@ class KeyUtils {
         return (signature as Data).base64EncodedString()
     }
 
-    class func loadPublicKey(from filePath: String) -> SecKey? {
-        do {
-            let pemString = try String(contentsOfFile: filePath, encoding: .utf8)
-            
-            let keyString = pemString
-                .replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----", with: "")
-                .replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
-                .replacingOccurrences(of: "\n", with: "")
-            
-            guard let keyData = Data(base64Encoded: keyString) else {
-                print("Failed to decode base64")
-                return nil
-            }
-            
-            let attributes: [String: Any] = [
-                kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-                kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
-                kSecAttrKeySizeInBits as String: 2048
-            ]
-            
-            guard let publicKey = SecKeyCreateWithData(keyData as CFData, attributes as CFDictionary, nil) else {
-                print("Failed to create public key")
-                return nil
-            }
-            
-            return publicKey
-        } catch {
-            print("Error reading .pem file: \(error)")
-            return nil
+
+    class func verifySignature(plainText: String, signature: String, publicKey: SecKey) -> Bool {
+        guard let plainTextData = plainText.data(using: .utf8),
+            let signatureData = Data(base64Encoded: signature) else {
+            return false
         }
+        
+        var error: Unmanaged<CFError>?
+        
+        // Verify the signature using SHA512 and RSA
+        let isValid = SecKeyVerifySignature(
+            publicKey,
+            .rsaSignatureMessagePSSSHA512,
+            plainTextData as CFData,
+            signatureData as CFData,
+            &error
+        )
+        
+        if let error = error {
+            print("Signature verification error: \(error.takeRetainedValue())")
+        }
+        
+        return isValid
     }
+
 }
