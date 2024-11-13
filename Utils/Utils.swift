@@ -63,5 +63,10 @@ class Utils {
         return dateFormatter.string(from: date)
     }
 
+    class func currentMilliseconds() -> Int64 {
+        let currentTime = Date().timeIntervalSince1970
+        return Int64(currentTime * 1000)
+    }
+
 }
 
