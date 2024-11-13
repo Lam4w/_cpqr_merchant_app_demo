@@ -12,10 +12,10 @@ class ServiceCall {
         
         DispatchQueue.global(qos: .userInitiated).async {
             let jsonData = try? JSONEncoder().encode(parameter)
-//            let jsonData = try? JSONSerialization.data(withJSONObject: parameter, options: .fragmentsAllowed)
             var request = URLRequest(url: URL(string: path)!,timeoutInterval: 20)
             
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(Utils.currentMilliseconds(), forHTTPHeaderField: "timestamp")
             request.httpMethod = "POST"
             request.httpBody = jsonData
 
