@@ -84,7 +84,6 @@ class CheckoutViewModel: ObservableObject {
             // Sending payment
             self.token = details
             self.showTransactionConfirmation = true
-            self.serviceCallCreatePayment()
             
         case .failure(let error):
             print("Scanning failed: \(error.localizedDescription)")
