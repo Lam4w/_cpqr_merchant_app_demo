@@ -89,8 +89,8 @@ struct CheckoutView: View {
                 .padding(.vertical, .screenWidth * 0.03)
                 
                 RoundedButton(title: "Quét mã QR") {
-//                    checkoutVM.isShowScanner = true
-                    checkoutVM.showTransactionConfirmation = true
+                    checkoutVM.isShowScanner = true
+//                    checkoutVM.showTransactionConfirmation = true
                 }
                 .padding(.bottom, .bottomInsets + 80)
             }

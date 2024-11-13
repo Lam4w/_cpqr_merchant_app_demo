@@ -83,7 +83,7 @@ class CheckoutViewModel: ObservableObject {
             
             // Sending payment
             self.token = details
-            
+            self.showTransactionConfirmation = true
             self.serviceCallCreatePayment()
             
         case .failure(let error):
@@ -297,7 +297,6 @@ class CheckoutViewModel: ObservableObject {
         print(missingTags)
     }
     
-    
     func parserQR() {
         let mockQRData = "85054350563031615F9F0507060000000050004F07A0000007300006500E46696E616E6369657261204543499F250290685A0A6008339300000499068F5F2D0665737074656E57136008339300000499068D27036010000000000FC501865F24032703315F340100636F5F2A0207049F02060000000010009F360200019F260891560D9A2CD86888820218009F102001150000000000000000000000000000000000000000000000000000000000009F3704773FCB7A950500000000009A032403229C01029F1A0207049F34032400029F0306000000000000"
 
@@ -311,7 +310,7 @@ class CheckoutViewModel: ObservableObject {
     }
     
     func serviceCallCreatePayment() {
-        let card = CardInfo(token: "123123123")
+        let card = CardInfo(token: self.token)
         let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
         let device = DeviceInfo(merchantType: "4412", pointServiceEntryCode: "039", pointServiceConCode: "00", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
                 
