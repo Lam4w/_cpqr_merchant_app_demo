@@ -56,7 +56,7 @@ class Utils {
         return dateFormatter.date(from: transmisDateTime)
     }
 
-    func formatDateToString(_ date: Date) -> String {
+    class func formatDateToString(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "vi_VN")
         dateFormatter.dateFormat = "HH:mm EEEE dd/MM/yyyy"
