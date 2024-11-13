@@ -114,6 +114,25 @@ class KeyUtils {
         }
     }
 
+    func decryptJWE(jweData: String, privateKey: SecKey) -> String? {
+        do {
+            // Parse the JWE object from the serialized string
+            let jweObject = try JWE(compactSerialization: jweData)
+            
+            // Set up the RSA decryption using the private key
+            let decrypter = RSADecrypter(privateKey: privateKey, algorithm: .RSAOAEP256)
+            
+            // Decrypt the JWE and get the payload
+            let payload = try jweObject.decrypt(using: decrypter)
+            
+            // Convert the payload to a string
+            return String(data: payload.data(), encoding: .utf8)
+        } catch {
+            print("Error decrypting JWE: \(error)")
+            return nil
+        }
+    }
+
     class func signerJWS(strData: String, privateKey: SecKey) -> String? {
         do {
             // Set up JWS Header with the RS512 algorithm and key ID
@@ -142,6 +161,29 @@ class KeyUtils {
             return nil
         }
     }
+
+    func verifyJWS(jwsData: String, publicKey: SecKey) -> Bool {
+        do {
+            // Parse the JWS object from the serialized string
+            let jwsObject = try JWS(compactSerialization: jwsData)
+            
+            // Set up an RS256 verifier with the provided public key
+            let verifier = RSAVerifier(publicKey: publicKey, algorithm: .RS512)
+            
+            // Verify the JWS object
+            if jwsObject.validate(using: verifier) {
+                print("JWS verification successful")
+                return true
+            } else {
+                print("JWS verification failed")
+                return false
+            }
+        } catch {
+            print("Error parsing or verifying JWS: \(error)")
+            return false
+        }
+    }
+
 
     class func genSignature(plainText: String, privateKey: SecKey) throws -> String {
         guard let data = plainText.data(using: .utf8) else {
