@@ -19,8 +19,7 @@ struct LoadingView<Content>: View where Content: View {
                     .disabled(self.isShowing)
                     .blur(radius: self.isShowing ? 2 : 0)
                 
-                Loader()
-                    .opacity(self.isShowing ? 1 : 0)
+
             }
         }
     }
