@@ -40,11 +40,6 @@ class CheckoutViewModel: ObservableObject {
     ]
     var chipData: String = ""
     
-    var payload: [String: Any] = [:]
-    var card: [String: String] = [:]
-    var payment: [String: String] = [:]
-    var device: [String: String] = [:]
-    
     @Published var transactions: [TransactionDetail] = []
     @Published var token: String = ""
     @Published var purchaseResponse: PurchaseResponse?
@@ -52,7 +47,7 @@ class CheckoutViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var showTransactionsDetail: Bool = false
     @Published var showTransactionConfirmation: Bool = false
-    @Published var showPaymentAccepted: Bool = false
+    @Published var showPaymentResult: Bool = false
     
     @Published var showError = false
     @Published var errorMessage = ""
@@ -89,7 +84,7 @@ class CheckoutViewModel: ObservableObject {
             // Sending payment
             self.token = details
             
-            self.serviceCallInitPayment()
+            self.serviceCallCreatePayment()
             
         case .failure(let error):
             print("Scanning failed: \(error.localizedDescription)")
@@ -315,37 +310,7 @@ class CheckoutViewModel: ObservableObject {
         }
     }
     
-    func serviceCallInitPayment() {
-        let body: [String: Any] = [
-            "payload": [
-                "card": [
-                    "token": self.token
-                ],
-                "payment": [
-                    "pro_code": "000000",
-                    "trans_amount": "000000700000",
-                    "transmis_date_time": Utils.getTransmisDateTime(),
-                    "system_trace_no": "111111",
-                    "time_local_trans": Utils.getTimeLocalTrans(),
-                    "date_local_trans": Utils.getDateLocalTrans(),
-                    "retrieval_refer_no": "120010123456",
-                    "trans_currency_code": "704",
-                    "service_code": "CPQR_PC"
-                ],
-                "device": [
-                    "merchant_type": "4412",
-                    "point_service_entry_code": "039",
-                    "point_service_con_code": "00",
-                    "card_acpt_terminal_code": "06450645",
-                    "card_acpt_iden-code": "ABC 1234",
-                    "card_acpt_name_location": "NAPAS Bank 7041111 HaNoiLyThuongKiet"
-                ]
-            ]
-        ]
-            
-    }
-    
-    func createPayment() {
+    func serviceCallCreatePayment() {
         let card = CardInfo(token: "123123123")
         let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
         let device = DeviceInfo(merchantType: "4412", acceptInstitutionCode: "9004401", pointServiceEntryCode: "00", pointServiceConCode: "06450645", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
@@ -450,21 +415,7 @@ class CheckoutViewModel: ObservableObject {
         self.isLoading = true
         
         ServiceCall.post(parameter: body, path: Path.PURCHASE) { responseObj in
-            if let responseData = responseObj {
-                let decoder = JSONDecoder()
-                do {
-                    self.purchaseResponse = try decodeResponse(from: responseData)
-                    if let result = self.purchaseResponse?.payload.result {
-                        print("Result code: \(result.code)")
-                        print("Message: \(result.message)")
-                        self.showPaymentAccepted = true
-                    }
-                } catch {
-                    print("Decoding error: \(error)")
-                    self.showError = true
-                    self.errorMessage = "Error parsing response"
-                }   
-            }
+            self.handleServiceResponse(responseObj)
         } failure: { error in
             self.isLoading = false
             print("Service call failed with error: \(String(describing: error))")
@@ -492,13 +443,13 @@ class CheckoutViewModel: ObservableObject {
             if let result = self.purchaseResponse?.payload.result {
                 print("Result code: \(result.code)")
                 print("Message: \(result.message)")
-                self.showPaymentAccepted = true
+                self.showPaymentResult = true
             }
         } catch {
             handleError(message: "Decoding error: \(error)")
-        } finally {
-            self.isLoading = false
         }
+        
+        self.isLoading = false
     }
 
     func decodeResponse(from data: Data) throws -> PurchaseResponse {

@@ -27,7 +27,7 @@ struct PaymentFailure: View {
                         Button {
 //                            mode.wrappedValue.dismiss()
                             homeVM.selectTab = 0
-                            checkoutVM.showPaymentAccepted = false
+                            checkoutVM.showPaymentResult = false
                             checkoutVM.showTransactionConfirmation = false
                         } label: {
                             FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .blue)
@@ -125,7 +125,7 @@ struct PaymentFailure: View {
                     
                     RoundedButton(title: "Thực hiện giao dịch mới") {
                         homeVM.selectTab = 1
-                        checkoutVM.showPaymentAccepted = false
+                        checkoutVM.showPaymentResult = false
                         checkoutVM.showTransactionConfirmation = false
 
                     }

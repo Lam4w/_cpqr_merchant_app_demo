@@ -149,7 +149,7 @@ struct PaymentConfirmationView: View {
                     }
                     
                     RoundedButton(title: "Xác nhận") {
-                        checkoutVM.createPayment()
+                        checkoutVM.serviceCallCreatePayment()
                     }
                 }
             }
@@ -159,7 +159,7 @@ struct PaymentConfirmationView: View {
             .ignoresSafeArea()
             .padding(.horizontal, 20)
             .padding(.bottom , .bottomInsets)
-            .background(NavigationLink(destination: PaymentAcceptedView(), isActive: $checkoutVM.showPaymentAccepted  , label: {
+            .background(NavigationLink(destination: PaymentResultView(), isActive: $checkoutVM.showPaymentResult  , label: {
                 EmptyView()
             }) )
         }

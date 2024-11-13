@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NVActivityIndicatorView
 
 struct LoadingView<Content>: View where Content: View {
     @Binding var isShowing: Bool

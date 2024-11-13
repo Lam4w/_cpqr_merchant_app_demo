@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftUIFontIcon
 
-struct PaymentAcceptedView: View {
+struct PaymentResultView: View {
 //    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     @StateObject var homeVM = HomeViewModel.shared
     @StateObject var checkoutVM = CheckoutViewModel.shared
@@ -25,9 +25,8 @@ struct PaymentAcceptedView: View {
                         Spacer()
                         
                         Button {
-//                            mode.wrappedValue.dismiss()
                             homeVM.selectTab = 0
-                            checkoutVM.showPaymentAccepted = false
+                            checkoutVM.showPaymentResult = false
                             checkoutVM.showTransactionConfirmation = false
                         } label: {
                             FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .blue)
@@ -38,30 +37,57 @@ struct PaymentAcceptedView: View {
                     }
                     .padding(.top, 15)
                     
-                    FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .blue)
-                        .padding(18)
-                        .background(.ultraThinMaterial)
-                        .clipShape(.circle)
-                    
-                    Text("Giao dịch thành công!")
-                        .multilineTextAlignment(.center)
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(.black)
-                        .padding(.bottom, 1)
-                    
-                    HStack{
-                        Text("250.000")
+                    if checkoutVM.purchaseResponse?.payload.result.code == "00" {
+                        FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .blue)
+                            .padding(18)
+                            .background(.ultraThinMaterial)
+                            .clipShape(.circle)
+                        
+                        Text("Giao dịch thành công!")
                             .multilineTextAlignment(.center)
-                            .font(.title)
+                            .font(.title2)
                             .bold()
-                            .foregroundColor(.blue)
-                        Text("vnd")
+                            .foregroundColor(.black)
+                            .padding(.bottom, 1)
+                        
+                        HStack{
+                            Text("250.000")
+                                .multilineTextAlignment(.center)
+                                .font(.title)
+                                .bold()
+                                .foregroundColor(.blue)
+                            Text("vnd")
+                                .multilineTextAlignment(.center)
+                                .font(.title3)
+                                .foregroundColor(.blue)
+                        }
+                            .padding(.bottom, 2)
+                    } else {
+                        FontIcon.text(.ionicon(code: .ios_close),fontsize: 60, color: .red)
+                            .padding(18)
+                            .background(.ultraThinMaterial)
+                            .clipShape(.circle)
+                        
+                        Text("Giao dịch không thành công!")
                             .multilineTextAlignment(.center)
-                            .font(.title3)
-                            .foregroundColor(.blue)
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.black)
+                            .padding(.bottom, 1)
+                        
+                        HStack{
+                            Text("250.000")
+                                .multilineTextAlignment(.center)
+                                .font(.title)
+                                .bold()
+                                .foregroundColor(.red)
+                            Text("vnd")
+                                .multilineTextAlignment(.center)
+                                .font(.title3)
+                                .foregroundColor(.red)
+                        }
+                            .padding(.bottom, 2)
                     }
-                        .padding(.bottom, 2)
                     
                     Text("14:53 Thứ Sáu 23/08/2024")
                         .multilineTextAlignment(.center)
@@ -125,7 +151,7 @@ struct PaymentAcceptedView: View {
                     
                     RoundedButton(title: "Thực hiện giao dịch mới") {
                         homeVM.selectTab = 1
-                        checkoutVM.showPaymentAccepted = false
+                        checkoutVM.showPaymentResult = false
                         checkoutVM.showTransactionConfirmation = false
 
                     }
@@ -141,8 +167,8 @@ struct PaymentAcceptedView: View {
         }
     }
 
-    struct OrderAccpetView_Previews: PreviewProvider {
+    struct PaymentResultView_Previews: PreviewProvider {
         static var previews: some View {
-            PaymentAcceptedView()
+            PaymentResultView()
         }
     }
