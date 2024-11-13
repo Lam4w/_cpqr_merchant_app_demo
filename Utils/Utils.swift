@@ -56,17 +56,11 @@ class Utils {
         return dateFormatter.date(from: transmisDateTime)
     }
 
-    class func getDayFromDate(from date: Date) -> Int? {
-        let calendar = Calendar.current
-        return calendar.component(.day, from: date)
-    }
-
-    class func getHourAndMinuteString(from date: Date) -> String {
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: date)
-        let minute = calendar.component(.minute, from: date)
-        
-        return "\(hour):\(minute)"
+    func formatDateToString(_ date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "vi_VN")
+        dateFormatter.dateFormat = "HH:mm EEEE dd/MM/yyyy"
+        return dateFormatter.string(from: date)
     }
 
 }
