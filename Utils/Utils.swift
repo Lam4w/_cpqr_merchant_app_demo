@@ -55,5 +55,19 @@ class Utils {
         
         return dateFormatter.date(from: transmisDateTime)
     }
+
+    class func getDayFromDate(from date: Date) -> Int? {
+        let calendar = Calendar.current
+        return calendar.component(.day, from: date)
+    }
+
+    class func getHourAndMinuteString(from date: Date) -> String {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        
+        return "\(hour):\(minute)"
+    }
+
 }
 
