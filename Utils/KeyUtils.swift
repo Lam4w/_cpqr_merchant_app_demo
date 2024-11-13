@@ -22,7 +22,6 @@ class KeyUtils {
         
         print(keyString)
         
-        // Remove PEM headers and newlines
         keyString = keyString
             .replacingOccurrences(of: "-----BEGIN RSA PRIVATE KEY-----", with: "")
             .replacingOccurrences(of: "-----END RSA PRIVATE KEY-----", with: "")
@@ -33,14 +32,12 @@ class KeyUtils {
             throw NSError(domain: "Base64 decoding failed", code: -2, userInfo: nil)
         }
         
-        // Define attributes for the key
         let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
             kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
             kSecAttrKeySizeInBits as String: 4096
         ]
         
-        // Create the key using the Security framework
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateWithData(decodedData as CFData, attributes as CFDictionary, &error) else {
             throw error!.takeRetainedValue() as Error
@@ -59,12 +56,10 @@ class KeyUtils {
         
         print(keyString)
         
-        // Remove PEM headers and newlines
         keyString = keyString
             .replacingOccurrences(of: "-----BEGIN CERTIFICATE-----", with: "")
             .replacingOccurrences(of: "-----END CERTIFICATE-----", with: "")
             .replacingOccurrences(of: "\n", with: "")
-            // .split(separator: "\n").joined()
         
         print("Key string after formatted: \(keyString)")
 
@@ -88,25 +83,20 @@ class KeyUtils {
 
     class func encryptJWE(originalData: String, publicKey: SecKey) -> String? {
         do {
-            // Set up JWE Header with the appropriate algorithm and encryption method
             let header = JWEHeader(keyManagementAlgorithm: .RSA1_5, contentEncryptionAlgorithm: .A256GCM)
             
-            // Convert the original data to Data format
             guard let payloadData = originalData.data(using: .utf8) else {
                 throw NSError(domain: "Invalid UTF-8 data", code: -1, userInfo: nil)
             }
             
-            // Create a JWE object with the header and payload
             let payload = Payload(payloadData)
             
-            // Encrypt the payload with the RSA public key and the generated CEK
             let encrypter = Encrypter(keyManagementAlgorithm: .RSA1_5, contentEncryptionAlgorithm: .A256GCM, encryptionKey: publicKey)!
      
             guard let jwe = try? JWE(header: header, payload: payload, encrypter: encrypter) else {
                 return nil
             }
             
-            // Serialize the JWE object to a compact string representation
             return jwe.compactSerializedString
         } catch {
             print("Encryption failed: \(error)")
@@ -116,16 +106,12 @@ class KeyUtils {
 
     func decryptJWE(jweData: String, privateKey: SecKey) -> String? {
         do {
-            // Parse the JWE object from the serialized string
             let jweObject = try JWE(compactSerialization: jweData)
             
-            // Set up the RSA decryption using the private key
-            let decrypter = RSADecrypter(privateKey: privateKey, algorithm: .RSAOAEP256)
+            let decrypter = Decrypter(keyManagementAlgorithm: .RSA1_5, contentEncryptionAlgorithm: .A256GCM, decryptionKey: privateKey)!
             
-            // Decrypt the JWE and get the payload
             let payload = try jweObject.decrypt(using: decrypter)
             
-            // Convert the payload to a string
             return String(data: payload.data(), encoding: .utf8)
         } catch {
             print("Error decrypting JWE: \(error)")
@@ -135,26 +121,21 @@ class KeyUtils {
 
     class func signerJWS(strData: String, privateKey: SecKey) -> String? {
         do {
-            // Set up JWS Header with the RS512 algorithm and key ID
             var header = JWSHeader(algorithm: .RS512)
             header.kid = "Napasqrpg2024"
             
-            // Convert the data to Data format
             guard let payloadData = strData.data(using: .utf8) else {
                 throw NSError(domain: "Invalid UTF-8 data", code: -1, userInfo: nil)
             }
             
-            // Create a JWS object with the header and payload
             let payload = Payload(payloadData)
             
-            // Sign the JWS using the private key
             let signer = Signer(signatureAlgorithm: .RS512, key: privateKey)!
             
             guard let jws = try? JWS(header: header, payload: payload, signer: signer) else {
                 return nil
             }
             
-            // Serialize the JWS object to a compact string representation
             return jws.compactSerializedString
         } catch {
             print("Signing failed: \(error)")
@@ -164,14 +145,11 @@ class KeyUtils {
 
     func verifyJWS(jwsData: String, publicKey: SecKey) -> Bool {
         do {
-            // Parse the JWS object from the serialized string
-            let jwsObject = try JWS(compactSerialization: jwsData)
+            let jws = try JWS(compactSerialization: jwsData)
             
-            // Set up an RS256 verifier with the provided public key
-            let verifier = RSAVerifier(publicKey: publicKey, algorithm: .RS512)
+            let verifier = Verifier(signatureAlgorithm: .RS512, key: publicKey)!
             
-            // Verify the JWS object
-            if jwsObject.validate(using: verifier) {
+            if jws.isValid(for: verifier) {
                 print("JWS verification successful")
                 return true
             } else {
@@ -207,29 +185,24 @@ class KeyUtils {
 
     class func loadPublicKey(from filePath: String) -> SecKey? {
         do {
-            // Load the .pem file contents as a string
             let pemString = try String(contentsOfFile: filePath, encoding: .utf8)
             
-            // Remove the header and footer
             let keyString = pemString
                 .replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----", with: "")
                 .replacingOccurrences(of: "-----END PUBLIC KEY-----", with: "")
                 .replacingOccurrences(of: "\n", with: "")
             
-            // Decode the Base64 string to raw key data
             guard let keyData = Data(base64Encoded: keyString) else {
                 print("Failed to decode base64")
                 return nil
             }
             
-            // Define attributes for a public key
             let attributes: [String: Any] = [
                 kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
                 kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
                 kSecAttrKeySizeInBits as String: 2048
             ]
             
-            // Create a SecKey instance from the raw key data
             guard let publicKey = SecKeyCreateWithData(keyData as CFData, attributes as CFDictionary, nil) else {
                 print("Failed to create public key")
                 return nil
