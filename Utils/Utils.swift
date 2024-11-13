@@ -44,5 +44,16 @@ class Utils {
         
         return dateNow
     }
+
+    class func convertToDate(from transmisDateTime: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMddHHmmss"
+        
+        // Set the current calendar year for context
+        dateFormatter.calendar = Calendar.current
+        dateFormatter.defaultDate = Calendar.current.startOfDay(for: Date())
+        
+        return dateFormatter.date(from: transmisDateTime)
+    }
 }
 
