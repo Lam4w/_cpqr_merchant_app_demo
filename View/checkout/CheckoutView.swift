@@ -11,11 +11,18 @@ import CodeScanner
 
 struct CheckoutView: View {
     @StateObject var checkoutVM = CheckoutViewModel.shared
+    @State private var amount: Double = 0.0
+    
+    private enum Field: Int {
+        case textEdit
+    }
+    
+    @FocusState private var focusField: Field?
 
     var body: some View {
         VStack{
             VStack{
-                Text("Tạo đơn hàng")
+                Text("Thông tin giao dịch")
                     .font(.title)
                     .fontWeight(.bold)
                     .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
@@ -27,7 +34,21 @@ struct CheckoutView: View {
                     .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.black)
                 
-                InputField(title: "MarchantID", placeHolder: "Nhập số tiền", txt: $checkoutVM.total)
+                HStack{
+                    TextField("Nhập số tiền", value: $amount, format: .currency(code: "VND"))
+                        .keyboardType(.numberPad)
+                        .disableAutocorrection(true)
+                        .frame(height: 40)
+                        .font(.title3)
+                        .focused($focusField, equals: .textEdit)
+                    
+                    Text("VND")
+                        .foregroundColor(.black)
+                        .font(.title3)
+                        .frame(minWidth: 50, maxWidth: 50, alignment:  .leading)
+                }
+                    
+                    Divider()
                 
                 VStack{
                     HStack {
@@ -108,6 +129,11 @@ struct CheckoutView: View {
         }) )
         .alert(isPresented: $checkoutVM.showError) {
             Alert(title: Text("Error"), message: Text(checkoutVM.errorMessage), dismissButton: .default(Text("OK")))
+        }
+        .onTapGesture {
+            if (focusField != nil) {
+                focusField = nil
+            }
         }
     }
 }

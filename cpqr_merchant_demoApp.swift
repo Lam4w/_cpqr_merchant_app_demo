@@ -17,7 +17,7 @@ struct cpqr_merchant_demoApp: App {
                 if (mainVM.isUserLogin) {
                     MainTabView()
                 } else {
-                    Test()
+                    WelcomeView()
                 }
             }
         }

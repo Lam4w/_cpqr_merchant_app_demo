@@ -15,7 +15,7 @@ struct InputField: View {
     var body: some View {
         VStack{
             Text(title)
-                .foregroundColor(.white)
+                .foregroundColor(.black)
                 .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment:  .leading)
             
             TextField(placeHolder, text: $txt)
