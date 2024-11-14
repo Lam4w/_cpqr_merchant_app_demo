@@ -11,7 +11,7 @@ import CodeScanner
 
 struct CheckoutView: View {
     @StateObject var checkoutVM = CheckoutViewModel.shared
-    @State private var amount: Double = 0.0
+    @State private var amount: String
     
     private enum Field: Int {
         case textEdit
@@ -41,6 +41,23 @@ struct CheckoutView: View {
                         .frame(height: 40)
                         .font(.title3)
                         .focused($focusField, equals: .textEdit)
+                        .onChange(of: currentText) { newValue in
+                            // Remove commas from the input
+                            let cleanedText = newValue.replacingOccurrences(of: ",", with: "")
+                            
+                            // Check if the cleaned text can be converted to a number
+                            if let number = Int(cleanedText) {
+                                // Format the number with commas as thousands separators
+                                let formattedText = formatWithCommas(number: number)
+                                // Update the current text with the formatted version
+                                if formattedText != currentText {
+                                    currentText = formattedText
+                                }
+                            } else {
+                                // If the input is not a valid number, reset to empty
+                                currentText = ""
+                            }
+                        }
                     
                     Text("VND")
                         .foregroundColor(.black)
@@ -135,6 +152,14 @@ struct CheckoutView: View {
                 focusField = nil
             }
         }
+    }
+
+    // Function to format numbers with commas as thousands separators
+    private func formatWithCommas(number: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = ","
+        return formatter.string(from: NSNumber(value: number)) ?? ""
     }
 }
 
