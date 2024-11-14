@@ -8,22 +8,53 @@
 import SwiftUI
 
 struct Test: View {
-    @State var amount: Decimal = 0.0
+ @State private var isSubtitleHidden = false
+    @State private var value = 0
     
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.maximumFractionDigits = 2
-        return formatter
-    }()
+    private var numberFormatter: NumberFormatter
     
+    init(numberFormatter: NumberFormatter = NumberFormatter()) {
+        self.numberFormatter = numberFormatter
+        self.numberFormatter.numberStyle = .currency
+        self.numberFormatter.maximumFractionDigits = 2
+    }
+
     var body: some View {
-        VStack {
-            Text(amount, format: .currency(code: "VND"))
-            TextField("Amount", value: $amount, formatter: formatter)
-                .keyboardType(.numberPad)
+        VStack(spacing: 20) {
+            
+            Text("Send money")
+                .font(.title)
+            
+            CurrencyTextField(numberFormatter: numberFormatter, value: $value)
+                .padding(20)
+                .overlay(RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 2))
+                .frame(height: 100)
+            
+            Rectangle()
+                .frame(width: 0, height: 40)
+            
+            Text("Send")
+                .fontWeight(.bold)
+                .padding(30)
+                .frame(width: 180, height: 50)
+                .background(Color.yellow)
+                .cornerRadius(20)
+                .onTapGesture {
+                    if !isSubtitleHidden {
+                        isSubtitleHidden.toggle()
+                    }
+                }
+                
+                
+            if isSubtitleHidden {
+                Text("Sending \(value)")
+            }
+            
+            Spacer()
         }
-        .padding()
+        .padding(.top, 60)
+        .padding(.horizontal, 20)
     }
 }
 
