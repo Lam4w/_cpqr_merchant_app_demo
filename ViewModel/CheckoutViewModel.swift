@@ -437,13 +437,49 @@ class CheckoutViewModel: ObservableObject {
         let decoder = JSONDecoder()
         do {
             self.purchaseResponse = try decodeResponse(from: responseData)
-            if let result = self.purchaseResponse?.payload.result {
-                print("Result code: \(result.code)")
-                print("Message: \(result.message)")
-                self.showPaymentResult = true
-            }
         } catch {
             handleError(message: "Decoding error: \(error)")
+        }
+        
+        guard let pathSigPub = Bundle.main.path(forResource: "CER_SIG_NP", ofType: "pem") else {
+            print("Error: Can not get path of public key.")
+            self.showError = true
+            self.errorMessage = "Public key error"
+            return
+        }
+        
+        guard let serverPubKey = try? KeyUtils.readPublicKey(from: pathSigPub) else {
+            print("Error: Can not read public key from cert")
+            self.showError = true
+            self.errorMessage = "Public key error"
+            return
+        }
+        
+        guard ((self.purchaseResponse?.signature) != nil) else {
+            print("Error: Can not generate signature")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        guard let payloadJson = Utils.jsonString(from: self.purchaseResponse?.payload) else {
+            print("Error: Failed to encode payload data to JSON.")
+            self.showError = true
+            self.errorMessage = "JSON encoding error"
+            return
+        }
+        
+        guard KeyUtils.verifySignature(plainText: payloadJson, signature: self.purchaseResponse!.signature, publicKey: serverPubKey) else {
+            print("Error: Can not generate signature")
+            self.showError = true
+            self.errorMessage = "Private key error"
+            return
+        }
+        
+        if let result = self.purchaseResponse?.payload.result {
+            print("Result code: \(result.code)")
+            print("Message: \(result.message)")
+            self.showPaymentResult = true
         }
         
         self.isLoading = false

@@ -9,6 +9,7 @@ import Foundation
 
 struct PurchaseResponse: Codable {
     let payload: PurchaseResponsePayload
+    let signature: String
 }
 
 struct PurchaseResponsePayload: Codable {
