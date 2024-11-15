@@ -50,7 +50,7 @@ struct PaymentResultView: View {
                         .padding(.bottom, 1)
                     
                     HStack{
-                        Text("250.000")
+                        Text(checkoutVM.total)
                             .multilineTextAlignment(.center)
                             .font(.title)
                             .bold()
@@ -75,7 +75,7 @@ struct PaymentResultView: View {
                         .padding(.bottom, 1)
                     
                     HStack{
-                        Text("250.000")
+                        Text(checkoutVM.total)
                             .multilineTextAlignment(.center)
                             .font(.title)
                             .bold()
@@ -112,14 +112,14 @@ struct PaymentResultView: View {
                     Divider()
                     
                     HStack {
-                        Text("Phí chuyển tiền")
+                        Text("Mã phản hồi")
                             .font(.title3)
                             .foregroundColor(.black)
                             .frame(height: 46)
                         
                         Spacer()
                         
-                        Text("Miễn phí")
+                        Text((checkoutVM.purchaseResponse?.payload.result.code)!)
                             .font(.title3)
                             .foregroundColor(.black)
                             .frame(height: 46)
@@ -128,14 +128,14 @@ struct PaymentResultView: View {
                     Divider()
                     
                     HStack {
-                        Text("Phí chuyển tiền")
+                        Text("Nội dung")
                             .font(.title3)
                             .foregroundColor(.black)
                             .frame(height: 46)
                         
                         Spacer()
                         
-                        Text("Miễn phí")
+                        Text((checkoutVM.purchaseResponse?.payload.result.message)!)
                             .font(.title3)
                             .foregroundColor(.black)
                             .frame(height: 46)

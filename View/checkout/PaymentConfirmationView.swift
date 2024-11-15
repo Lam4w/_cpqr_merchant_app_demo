@@ -103,7 +103,7 @@ struct PaymentConfirmationView: View {
                             Spacer()
                             
                             HStack{
-                                Text("250.000")
+                                Text(checkoutVM.total)
                                     .multilineTextAlignment(.center)
                                     .font(.title)
                                     .bold()

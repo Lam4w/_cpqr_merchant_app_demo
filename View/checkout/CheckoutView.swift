@@ -11,7 +11,7 @@ import CodeScanner
 
 struct CheckoutView: View {
     @StateObject var checkoutVM = CheckoutViewModel.shared
-    @State private var amount: String
+    @State var amount: String = ""
     
     private enum Field: Int {
         case textEdit
@@ -35,27 +35,21 @@ struct CheckoutView: View {
                     .foregroundColor(.black)
                 
                 HStack{
-                    TextField("Nhập số tiền", value: $amount, format: .currency(code: "VND"))
+                    TextField("Nhập số tiền", text: $amount)
                         .keyboardType(.numberPad)
                         .disableAutocorrection(true)
                         .frame(height: 40)
                         .font(.title3)
                         .focused($focusField, equals: .textEdit)
-                        .onChange(of: currentText) { newValue in
-                            // Remove commas from the input
-                            let cleanedText = newValue.replacingOccurrences(of: ",", with: "")
-                            
-                            // Check if the cleaned text can be converted to a number
+                        .onChange(of: amount) {
+                            let cleanedText = amount.replacingOccurrences(of: ",", with: "")
                             if let number = Int(cleanedText) {
-                                // Format the number with commas as thousands separators
                                 let formattedText = formatWithCommas(number: number)
-                                // Update the current text with the formatted version
-                                if formattedText != currentText {
-                                    currentText = formattedText
+                                if formattedText != amount {
+                                    amount = formattedText
                                 }
                             } else {
-                                // If the input is not a valid number, reset to empty
-                                currentText = ""
+                                amount = ""
                             }
                         }
                     
@@ -64,8 +58,8 @@ struct CheckoutView: View {
                         .font(.title3)
                         .frame(minWidth: 50, maxWidth: 50, alignment:  .leading)
                 }
-                    
-                    Divider()
+                
+                Divider()
                 
                 VStack{
                     HStack {
@@ -101,7 +95,7 @@ struct CheckoutView: View {
             }
             
             Spacer()
-//                .frame(height: 280)
+            //                .frame(height: 280)
             VStack{
                 VStack {
                     Text("Bằng cách tiếp tục, bạn đồng ý với")
@@ -127,17 +121,23 @@ struct CheckoutView: View {
                 .padding(.vertical, .screenWidth * 0.03)
                 
                 RoundedButton(title: "Quét mã QR") {
-                    checkoutVM.isShowScanner = true
-//                    checkoutVM.showTransactionConfirmation = true
+                    if amount.isEmpty {
+                        checkoutVM.showError = true
+                        checkoutVM.errorMessage = "amount can not be empty"
+                    } else {
+                        checkoutVM.total = amount
+                        checkoutVM.isShowScanner = true
+//                        checkoutVM.showTransactionConfirmation = true
+                    }
                 }
                 .padding(.bottom, .bottomInsets + 80)
             }
-            
         }
         .padding(.top, .topInsets)
         .padding(.horizontal, 20)
         .frame(width: .screenWidth, height: .screenHeight)
         .background(.white)
+        .ignoresSafeArea(.keyboard)
         .sheet(isPresented: $checkoutVM.isShowScanner) {
             CodeScannerView(codeTypes: [.qr], simulatedData: "test data", completion: checkoutVM.handleScan)
         }
@@ -154,7 +154,6 @@ struct CheckoutView: View {
         }
     }
 
-    // Function to format numbers with commas as thousands separators
     private func formatWithCommas(number: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal

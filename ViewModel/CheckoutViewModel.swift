@@ -310,99 +310,81 @@ class CheckoutViewModel: ObservableObject {
     
     func serviceCallCreatePayment() {
         let card = CardInfo(token: self.token)
-        let payment = RequestPaymentInfo(proCode: "000000", transAmount: "000000700000", transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: "111111", timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
+        guard let transAmount = Utils.reformatAmount(self.total) else {
+            self.handleError(message: "Can not convert transaction amount")
+            return
+        }
+        let payment = RequestPaymentInfo(proCode: "000000", transAmount: transAmount, transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: Utils.generateRandomTraceNo(), timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
         let device = DeviceInfo(merchantType: "4412", pointServiceEntryCode: "039", pointServiceConCode: "00", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
                 
         guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem") else {
-            print("Error: Can not get path of public key.")
-            self.showError = true
-            self.errorMessage = "Public key error"
+            self.handleError(message: "Req - Can not get path of public key")
             return
         }
         
         print("jwe cart path: \(pathJwePub)")
         
         guard let serverPubKey = try? KeyUtils.readPublicKey(from: pathJwePub) else {
-            print("Error: Can not read public key from cert")
-            self.showError = true
-            self.errorMessage = "Public key error"
+            self.handleError(message: "Req - Can not read public key from cert")
             return
         }
         
         print("key: \(String(describing: serverPubKey))")
 
         guard let cardJson = Utils.jsonString(from: card) else {
-            print("Error: Failed to encode card data to JSON.")
-            self.showError = true
-            self.errorMessage = "JSON encoding error"
+            self.handleError(message: "Req - Failed to encode card data to JSON")
             return
         }
         
         print("Card json: \(cardJson)")
 
         guard let strJwe = KeyUtils.encryptJWE(originalData: cardJson, publicKey: serverPubKey) else {
-            print("Error: Failed to encrypt JWE.")
-            self.showError = true
-            self.errorMessage = "Encryption error"
+            self.handleError(message: "Req - Failed to encrypt JWE")
             return
         }
         
         print("string jwe: \(strJwe)")
         
         guard let pathJwsPri = Bundle.main.path(forResource: "PK_JWS_DEVICE", ofType: "key") else {
-            print("Error: Can not get path of private key.")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.handleError(message: "Req - Can not get path of private key JWS")
             return
         }
         
         print("jws key path: \(pathJwsPri)")
         
         guard let devicePrikey = try? KeyUtils.readPrivateKey(from: pathJwsPri) else {
-            print("Error: Can not read private key from path")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.handleError(message: "Req - Can not read private key from path JWS")
             return
         }
         
         guard let strJws = KeyUtils.signerJWS(strData: strJwe, privateKey: devicePrikey) else {
-            print("Error: Failed to encrypt JWE.")
-            self.showError = true
-            self.errorMessage = "Encryption error"
+            self.handleError(message: "Req - Failed to sign JWS")
             return
         }
         
         print("string jws: \(strJws)")
         
         guard let pathSigPri = Bundle.main.path(forResource: "PK_SIG_DEVICE", ofType: "key") else {
-            print("Error: Can not get path of private key.")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.handleError(message: "Req - Can not get path of private key Sig")
             return
         }
         
         print("jws key path: \(pathJwsPri)")
         
         guard let devicePriSig = try? KeyUtils.readPrivateKey(from: pathSigPri) else {
-            print("Error: Can not read private key from path")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.handleError(message: "Req - Can not read private key from path Sig")
             return
         }
         
         let requestPayload = PurchaseRequestPayload(card: strJws, payment: payment, device: device)
         
         guard let payloadJson = Utils.jsonString(from: requestPayload) else {
-            print("Error: Failed to encode payload data to JSON.")
-            self.showError = true
-            self.errorMessage = "JSON encoding error"
+            self.handleError(message: "Req - Failed to encode payload data to JSON")
             return
         }
         
         guard let strSignatureDevice = try? KeyUtils.genSignature(plainText: payloadJson, privateKey: devicePriSig) else {
-            print("Error: Can not generate signature")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.handleError(message: "Req - Can not generate signature")
             return
         }
         
@@ -417,8 +399,7 @@ class CheckoutViewModel: ObservableObject {
         } failure: { error in
             self.isLoading = false
             print("Service call failed with error: \(String(describing: error))")
-            self.errorMessage = "Network error"
-            self.showError = true
+            self.handleError(message: "Network error")
         }
     }
     
@@ -438,41 +419,38 @@ class CheckoutViewModel: ObservableObject {
         do {
             self.purchaseResponse = try decodeResponse(from: responseData)
         } catch {
-            handleError(message: "Decoding error: \(error)")
+            self.isLoading = false
+            self.handleError(message: "Decoding error: \(error)")
+            return
         }
         
         guard let pathSigPub = Bundle.main.path(forResource: "CER_SIG_NP", ofType: "pem") else {
-            print("Error: Can not get path of public key.")
-            self.showError = true
-            self.errorMessage = "Public key error"
+            self.isLoading = false
+            self.handleError(message: "Res - Can not get path of public key Sig")
             return
         }
         
         guard let serverPubKey = try? KeyUtils.readPublicKey(from: pathSigPub) else {
-            print("Error: Can not read public key from cert")
-            self.showError = true
-            self.errorMessage = "Public key error"
+            self.isLoading = false
+            self.handleError(message: "Res - Can not read public key from cert Sig")
             return
         }
         
         guard ((self.purchaseResponse?.signature) != nil) else {
-            print("Error: Can not generate signature")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.isLoading = false
+            self.handleError(message: "Res - Can not generate signature")
             return
         }
         
         guard let payloadJson = Utils.jsonString(from: self.purchaseResponse?.payload) else {
-            print("Error: Failed to encode payload data to JSON.")
-            self.showError = true
-            self.errorMessage = "JSON encoding error"
+            self.isLoading = false
+            self.handleError(message: "Res - Failed to encode payload data to JSON")
             return
         }
         
         guard KeyUtils.verifySignature(plainText: payloadJson, signature: self.purchaseResponse!.signature, publicKey: serverPubKey) else {
-            print("Error: Can not generate signature")
-            self.showError = true
-            self.errorMessage = "Private key error"
+            self.isLoading = false
+            self.handleError(message: "Res - Verify signature failed")
             return
         }
         

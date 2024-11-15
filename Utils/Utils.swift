@@ -69,6 +69,20 @@ class Utils {
         
         return String(currentMilli)
     }
+    
+    class func reformatAmount(_ amount: String) -> String? {
+        let cleanedAmount = amount.replacingOccurrences(of: ",", with: "")
+        guard let amountValue = Double(cleanedAmount) else {
+            return nil
+        }
+        
+        let formattedValue = Int(amountValue * 100)
+        
+        return String(format: "%012d", formattedValue)
+    }
 
+    class func generateRandomTraceNo() -> String {
+        return String(Int.random(in: 100000...999999))
+    }
 }
 
