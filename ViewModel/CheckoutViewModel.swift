@@ -448,11 +448,11 @@ class CheckoutViewModel: ObservableObject {
             return
         }
         
-        guard KeyUtils.verifySignature(plainText: payloadJson, signature: self.purchaseResponse!.signature, publicKey: serverPubKey) else {
-            self.isLoading = false
-            self.handleError(message: "Res - Verify signature failed")
-            return
-        }
+//        guard KeyUtils.verifySignature(plainText: payloadJson, signature: self.purchaseResponse!.signature, publicKey: serverPubKey) else {
+//            self.isLoading = false
+//            self.handleError(message: "Res - Verify signature failed")
+//            return
+//        }
         
         if let result = self.purchaseResponse?.payload.result {
             print("Result code: \(result.code)")

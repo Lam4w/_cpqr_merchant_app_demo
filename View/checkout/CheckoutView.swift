@@ -123,7 +123,7 @@ struct CheckoutView: View {
                 RoundedButton(title: "Quét mã QR") {
                     if amount.isEmpty {
                         checkoutVM.showError = true
-                        checkoutVM.errorMessage = "amount can not be empty"
+                        checkoutVM.errorMessage = "Amount can not be empty"
                     } else {
                         checkoutVM.total = amount
                         checkoutVM.isShowScanner = true
