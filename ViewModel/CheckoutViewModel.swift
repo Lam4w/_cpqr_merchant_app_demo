@@ -339,35 +339,35 @@ class CheckoutViewModel: ObservableObject {
             return
         }
         
-        print("jwe cart path: \(pathJwePub)")
+//        print("jwe cert path: \(pathJwePub)")
         
         guard let serverPubKey = try? KeyUtils.readPublicKey(from: pathJwePub) else {
             self.handleError(message: "Req - Can not read public key from cert")
             return
         }
         
-        print("key: \(String(describing: serverPubKey))")
+//        print("key: \(String(describing: serverPubKey))")
 
         guard let cardJson = Utils.jsonString(from: card) else {
             self.handleError(message: "Req - Failed to encode card data to JSON")
             return
         }
         
-        print("Card json: \(cardJson)")
+//        print("Card json: \(cardJson)")
 
         guard let strJwe = KeyUtils.encryptJWE(originalData: cardJson, publicKey: serverPubKey) else {
             self.handleError(message: "Req - Failed to encrypt JWE")
             return
         }
         
-        print("string jwe: \(strJwe)")
+//        print("string jwe: \(strJwe)")
         
         guard let pathJwsPri = Bundle.main.path(forResource: "PK_JWS_DEVICE", ofType: "key") else {
             self.handleError(message: "Req - Can not get path of private key JWS")
             return
         }
         
-        print("jws key path: \(pathJwsPri)")
+//        print("jws key path: \(pathJwsPri)")
         
         guard let devicePrikey = try? KeyUtils.readPrivateKey(from: pathJwsPri) else {
             self.handleError(message: "Req - Can not read private key from path JWS")
@@ -379,14 +379,14 @@ class CheckoutViewModel: ObservableObject {
             return
         }
         
-        print("string jws: \(strJws)")
+//        print("string jws: \(strJws)")
         
         guard let pathSigPri = Bundle.main.path(forResource: "PK_SIG_DEVICE", ofType: "key") else {
             self.handleError(message: "Req - Can not get path of private key Sig")
             return
         }
         
-        print("jws key path: \(pathJwsPri)")
+//        print("jws key path: \(pathJwsPri)")
         
         guard let devicePriSig = try? KeyUtils.readPrivateKey(from: pathSigPri) else {
             self.handleError(message: "Req - Can not read private key from path Sig")
@@ -405,7 +405,7 @@ class CheckoutViewModel: ObservableObject {
             return
         }
         
-        print("string signature: \(strSignatureDevice)")
+//        print("string signature: \(strSignatureDevice)")
         
         let body = PurchaseRequest(payload: PurchaseRequestPayload(card: strJws, payment: payment, device: device), signature: strSignatureDevice)
       
