@@ -314,8 +314,25 @@ class CheckoutViewModel: ObservableObject {
             self.handleError(message: "Can not convert transaction amount")
             return
         }
-        let payment = RequestPaymentInfo(proCode: "000000", transAmount: transAmount, transmisDateTime: Utils.getTransmisDateTime(), systemTraceNo: Utils.generateRandomTraceNo(), timeLocalTrans: Utils.getTimeLocalTrans(), dateLocalTrans: Utils.getDateLocalTrans(), retrievalReferNo: "120010123456", transCurrencyCode: "704", serviceCode: "CPQR_PC")
-        let device = DeviceInfo(merchantType: "4412", pointServiceEntryCode: "039", pointServiceConCode: "00", cardAcptTerminalCode: "06450645", cardAcptIdenCode: "ABC 1234", cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet")
+        let payment = RequestPaymentInfo(
+            proCode: "000000", 
+            transAmount: transAmount, 
+            transmisDateTime: Utils.getTransmisDateTime(), 
+            systemTraceNo: Utils.generateRandomTraceNo(), 
+            timeLocalTrans: Utils.getTimeLocalTrans(), 
+            dateLocalTrans: Utils.getDateLocalTrans(), 
+            retrievalReferNo: "120010123456", 
+            transCurrencyCode: "704", 
+            serviceCode: "CPQR_PC"
+        )
+        let device = DeviceInfo(
+            merchantType: "4412", 
+            pointServiceEntryCode: "039", 
+            pointServiceConCode: "00", 
+            cardAcptTerminalCode: "06450645", 
+            cardAcptIdenCode: "ABC 1234", 
+            cardAcptNameLocation: "NAPAS Bank 7041111 HaNoiLyThuongKiet"
+        )
                 
         guard let pathJwePub = Bundle.main.path(forResource: "CER_JWE_NP", ofType: "pem") else {
             self.handleError(message: "Req - Can not get path of public key")
