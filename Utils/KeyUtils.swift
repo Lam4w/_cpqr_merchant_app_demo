@@ -20,7 +20,7 @@ class KeyUtils {
             throw NSError(domain: "Invalid file encoding", code: -1, userInfo: nil)
         }
         
-        print(keyString)
+//        print(keyString)
         
         keyString = keyString
             .replacingOccurrences(of: "-----BEGIN RSA PRIVATE KEY-----", with: "")
@@ -54,14 +54,14 @@ class KeyUtils {
             throw NSError(domain: "Invalid file encoding", code: -1, userInfo: nil)
         }
         
-        print(keyString)
+//        print(keyString)
         
         keyString = keyString
             .replacingOccurrences(of: "-----BEGIN CERTIFICATE-----", with: "")
             .replacingOccurrences(of: "-----END CERTIFICATE-----", with: "")
             .replacingOccurrences(of: "\n", with: "")
         
-        print("Key string after formatted: \(keyString)")
+//        print("Key string after formatted: \(keyString)")
 
         guard let decodedData = Data(base64Encoded: keyString) else {
             print("Error: base64 decoding failed")
