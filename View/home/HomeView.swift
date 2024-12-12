@@ -151,11 +151,12 @@ struct Services : View {
                 }) {
                     
                     VStack(spacing: 8){
-                        FontIcon.button(.ionicon(code: .md_card), action: {},fontsize: 30)
+                        FontIcon.button(.ionicon(code: .ios_more), action: {},fontsize: 30)
                             .foregroundColor(.white)
                             .padding(15)
                             .background(.blue)
                             .clipShape(.circle)
+                            .opacity(0.8)
                         
                         Text("Service")
                             .frame(width: 55)
@@ -172,11 +173,12 @@ struct Services : View {
                 }) {
                     
                     VStack(spacing: 8){
-                        FontIcon.button(.ionicon(code: .md_card), action: {},fontsize: 30)
+                        FontIcon.button(.ionicon(code: .ios_more), action: {},fontsize: 30)
                             .foregroundColor(.white)
                             .padding(15)
                             .background(.blue)
                             .clipShape(.circle)
+                            .opacity(0.8)
                         
                         Text("Service")
                             .frame(width: 55)
@@ -266,7 +268,7 @@ struct Row1 : View {
                 VStack(spacing: 8){
                     
                     VStack{
-                        FontIcon.button(.ionicon(code: .md_card), action: {},fontsize: 35)
+                        FontIcon.button(.ionicon(code: .md_more), action: {},fontsize: 35)
                             .padding(0)
                     }.padding()
                     .background(Color.black.opacity(0.05))
