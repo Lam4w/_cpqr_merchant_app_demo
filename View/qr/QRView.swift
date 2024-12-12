@@ -11,6 +11,8 @@ import SwiftUIFontIcon
 struct QRView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     @StateObject var qrVM = QRViewModel.share
+    @StateObject var homeVM = HomeViewModel.shared
+    @State private var reloadTrigger = UUID()
     
     var body: some View {
         VStack {
@@ -33,7 +35,8 @@ struct QRView: View {
                 Spacer()
                 
                 Button {
-                    mode.wrappedValue.dismiss()
+//                    mode.wrappedValue.dismiss()
+                    homeVM.selectTab = 0
                 } label: {
                     FontIcon.text(.materialIcon(code: .close),fontsize: 20, color: .black)
                         .padding(5)
@@ -60,6 +63,7 @@ struct QRView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 250, height: 250)
+                        .id(reloadTrigger)
                     Spacer()
                 }
                 .frame(width: .screenWidth - 60, height: 350)
@@ -91,7 +95,7 @@ struct QRView: View {
             Spacer()
             
             RoundedButton(title: "Tạo mã QR mới") {
-                
+                reloadView()
             }
             .padding(.bottom, .bottomInsets + 80)
             
@@ -101,6 +105,10 @@ struct QRView: View {
         .frame(width: .screenWidth, height: .screenHeight)
         .background(.white)
         .cornerRadius(20)
+    }
+    
+    func reloadView() {
+        reloadTrigger = UUID()
     }
 }
 

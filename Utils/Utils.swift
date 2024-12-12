@@ -10,7 +10,7 @@ import Foundation
 class Utils {
     class func jsonString<T: Codable>(from object: T) -> String? {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
+        encoder.outputFormatting = .sortedKeys
         if let jsonData = try? encoder.encode(object) {
             return String(data: jsonData, encoding: .utf8)
         }
@@ -79,6 +79,29 @@ class Utils {
         let formattedValue = Int(amountValue * 100)
         
         return String(format: "%012d", formattedValue)
+    }
+    
+    class func encodeBase64(_ input: String) -> String {
+        var data = Data()
+        var temp = ""
+        
+        for (i, ch) in input.enumerated() {
+            temp.append(ch)
+            if i % 2 != 0 {
+                guard let byte = UInt8(temp, radix: 16) else { return "" }
+                data.append(byte)
+                temp = ""
+            }
+        }
+        
+        let base64Val = data.base64URLEncodedString()
+        
+        return base64Val
+    }
+    
+    class func generateRandom4DigitNunber() -> String {
+        let randomNumber = Int.random(in: 1000...9999)
+        return String(randomNumber)
     }
 
     class func generateRandomTraceNo() -> String {

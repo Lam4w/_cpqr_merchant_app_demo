@@ -167,7 +167,7 @@ class KeyUtils {
             throw NSError(domain: "Invalid input encoding", code: 0, userInfo: nil)
         }
         
-        let algorithm: SecKeyAlgorithm = .rsaSignatureMessagePSSSHA512
+        let algorithm: SecKeyAlgorithm = .rsaSignatureMessagePKCS1v15SHA512
         
         // Ensure the algorithm is supported
         guard SecKeyIsAlgorithmSupported(privateKey, .sign, algorithm) else {
