@@ -1,0 +1,113 @@
+import SwiftUI
+
+struct HomeBetaView: View {
+    var body: some View {
+        ScrollView {
+            VStack {
+                ZStack(alignment: .top) {
+                    AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/834e507598975915c4a4d7819f81d058c4ef4538f7ba454a911797ee30ec6994?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp")) { image in
+                        image.resizable()
+                             .aspectRatio(1.071, contentMode: .fill)
+                    } placeholder: {
+                        Color(.systemGray5)
+                    }
+                    
+                    VStack(alignment: .trailing) {
+                        AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/77d480a6d7b7ff9282696dff46666bd9662dbfff187ab64d6cf1414a2030ecbd?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp")) { image in
+                            image.resizable()
+                                 .frame(width: 20, height: 20)
+                        } placeholder: {
+                            Color.clear
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.top, 10)
+                    .padding(.bottom, 112)
+                    .background(Color.black.opacity(0.5))
+                }
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 10) {
+                        AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/0ba447f30cf814599940c07a6c35eb362967cd24636317f8ef2a66fd1d7bb972?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp")) { image in
+                            image.resizable()
+                                 .frame(width: 38, height: 38)
+                                 .clipShape(RoundedRectangle(cornerRadius: 8))
+                        } placeholder: {
+                            Color(.systemGray4)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Cafe Bistro")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(Color(.neutralGray900))
+                            
+                            Text("M-31, Bhopal, Madhya Pradesh")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(Color(.neutralGray400))
+                            
+                            HStack(spacing: 6) {
+                                Text("4.3")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 4)
+                                    .background(Color.green)
+                                    .cornerRadius(4)
+                                
+                                Text("Rating (562)")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(Color(.neutralGray400))
+                            }
+                            .padding(.top, 6)
+                        }
+                    }
+                    
+                    QuickActionsView()
+                    
+                    ManagementActionsView()
+                    
+                    AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/716e9263ef86776c338bf79252e8f279c15313d15027b65d7279dfaf2c11bc19?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp")) { image in
+                        image.resizable()
+                            .aspectRatio(2.79, contentMode: .fit)
+                    } placeholder: {
+                        Color(.systemGray5)
+                    }
+                    .padding(.top, 12)
+                    
+                    Text("Recent Payment")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(Color(.neutralGray900))
+                        .padding(.top, 10)
+                    
+                    Text("No Payments Yet")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(Color(.neutralGray800))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 44)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color(.slate200), lineWidth: 1)
+                        )
+                }
+                .padding(10)
+                .background(Color.white)
+                .cornerRadius(12)
+            }
+            .background(Color(.emerald500))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white, lineWidth: 1)
+            )
+            .frame(maxWidth: 151)
+        }
+    }
+}
+
+struct HomeBetaView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeBetaView()
+    }
+}
