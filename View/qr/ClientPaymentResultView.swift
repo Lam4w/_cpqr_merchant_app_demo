@@ -28,7 +28,7 @@ struct ClientPaymentResultView: View {
 //                        checkoutVM.showPaymentResult = false
 //                        checkoutVM.showTransactionConfirmation = false
                     } label: {
-                        FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .blue)
+                        FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .accent)
                             .padding(12)
                             .background(.ultraThinMaterial)
                             .clipShape(.circle)
@@ -36,9 +36,9 @@ struct ClientPaymentResultView: View {
                 }
                 .padding(.top, 15)
                 
-                FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .blue)
+                FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .primary)
                     .padding(18)
-                    .background(.ultraThinMaterial)
+                    .background(Color.mutedBackground)
                     .clipShape(.circle)
                 
                 Text("Giao dịch thành công!")
@@ -49,7 +49,7 @@ struct ClientPaymentResultView: View {
                     .padding(.bottom, 1)
                 
                 HStack{
-                    Text(qrVM.generateQrResponse)
+                    Text("200.000")
                         .multilineTextAlignment(.center)
                         .font(.title)
                         .bold()
@@ -61,7 +61,7 @@ struct ClientPaymentResultView: View {
                 }
                     .padding(.bottom, 2)
                 
-                Text(getDisplayTime())
+                Text("18/12/2024")
                     .multilineTextAlignment(.center)
                     .font(.subheadline)
                     .foregroundColor(.black)
@@ -81,38 +81,6 @@ struct ClientPaymentResultView: View {
                             .scaledToFit()
                             .frame(width: 30, height: 20)
                     }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Mã phản hồi")
-                            .font(.title3)
-                            .foregroundColor(.black)
-                            .frame(height: 46)
-                        
-                        Spacer()
-                        
-                        Text((checkoutVM.purchaseResponse?.payload.result.code)!)
-                            .font(.title3)
-                            .foregroundColor(.black)
-                            .frame(height: 46)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Nội dung")
-                            .font(.title3)
-                            .foregroundColor(.black)
-                            .frame(height: 46)
-                        
-                        Spacer()
-                        
-                        Text((checkoutVM.purchaseResponse?.payload.result.message)!)
-                            .font(.title3)
-                            .foregroundColor(.black)
-                            .frame(height: 46)
-                    }
                 }
                 .padding(20)
                 .background(Color.gray.opacity(0.05))
@@ -121,10 +89,10 @@ struct ClientPaymentResultView: View {
                 
                 Spacer()
                 
-                RoundedButton(title: "Thực hiện giao dịch mới") {
+                RoundedButton(title: "OK") {
                     homeVM.selectTab = 1
-                    checkoutVM.showPaymentResult = false
-                    checkoutVM.showTransactionConfirmation = false
+//                    checkoutVM.showPaymentResult = false
+//                    checkoutVM.showTransactionConfirmation = false
 
                 }
             }
@@ -138,11 +106,15 @@ struct ClientPaymentResultView: View {
         .padding(.bottom , .bottomInsets)
     }
     
-    func getDisplayTime() -> String {
-        let transDateString = checkoutVM.purchaseResponse?.payload.payment.transmisDateTime
-        let transDate = Utils.convertToDate(from: (transDateString)!)
-        let displayDate = Utils.formatDateToString(transDate!)
-        
-        return displayDate
-    }
+//    func getDisplayTime() -> String {
+//        let transDateString = checkoutVM.purchaseResponse?.payload.payment.transmisDateTime
+//        let transDate = Utils.convertToDate(from: (transDateString)!)
+//        let displayDate = Utils.formatDateToString(transDate!)
+//        
+//        return displayDate
+//    }
+}
+
+#Preview {
+    ClientPaymentResultView()
 }

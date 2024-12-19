@@ -10,9 +10,11 @@ import SwiftUIFontIcon
 
 struct QRView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-    @StateObject var qrVM = QRViewModel.share
+    @StateObject var qrVM = QRViewModel.shared
     @StateObject var homeVM = HomeViewModel.shared
     @State private var reloadTrigger = UUID()
+    
+    private var timer: DispatchSourceTimer?
     
     var body: some View {
         VStack {
@@ -101,25 +103,25 @@ struct QRView: View {
         }
     }
 
-    func startTimer() {
-        let queue = DispatchQueue.global(qos: .userInitiated)
-        let timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now(), repeating: 10.0)
-
-        timer.setEventHandler {
-            DispatchQueue.main.async {
-                timerAction = "Timer fired at \(Date())"
-            }
-        }
-
-        timer.resume()
-        self.timer = timer
-    }
-
-    func stopTimer() {
-        timer?.cancel()
-    }
-    
+//    func startTimer() {
+//        let queue = DispatchQueue.global(qos: .userInitiated)
+//        let newTimer = DispatchSource.makeTimerSource(queue: queue)
+//        newTimer.schedule(deadline: .now(), repeating: 10.0)
+//
+//        newTimer.setEventHandler {
+//            DispatchQueue.main.async {
+////                timerAction = "Timer fired at \(Date())"
+//            }
+//        }
+//
+//        newTimer.resume()
+//        timer = newTimer
+//    }
+//
+//    func stopTimer() {
+//        timer?.cancel()
+//    }
+//    
     func reloadView() {
         reloadTrigger = UUID()
     }

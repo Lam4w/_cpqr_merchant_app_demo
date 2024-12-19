@@ -50,8 +50,6 @@ class QRViewModel: ObservableObject {
             print("Service call get qr failed with error: \(String(describing: error))")
             self.handleError(message: "Server error")
         }
-        
-//        let res: String = "hQVDUFYwMWFaTwegAAAHJxAQUAtOQVBBUyBERUJJVJ8lApEjWgqXBBGZMphAif//Xy0HRW5nbGlzaFcTlwQRmTKYQInScDIRAAAAAAD//58ZBjExMTExMV8kAycDMV80AgAAY3GfAgYAAAAFVVWfAwYAAAAAAACfGgIHBJUFAAAAgABfKgIHBJoDJBEFnAEAnzcEPWHOZZ80Az8AAJ8nAYCfNgIAVp8QIA+lAaoB+AQAAAAAAAAAAAAPAQEAAAAAAAAAAAAAAAAAggIJAIQHoAAABycQEA=="
     }
     
     func decodeResponse(from data: Data) throws -> GenerateQrResponse {
