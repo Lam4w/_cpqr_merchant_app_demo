@@ -100,6 +100,25 @@ struct QRView: View {
             qrVM.callServiceGetQR()
         }
     }
+
+    func startTimer() {
+        let queue = DispatchQueue.global(qos: .userInitiated)
+        let timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.schedule(deadline: .now(), repeating: 10.0)
+
+        timer.setEventHandler {
+            DispatchQueue.main.async {
+                timerAction = "Timer fired at \(Date())"
+            }
+        }
+
+        timer.resume()
+        self.timer = timer
+    }
+
+    func stopTimer() {
+        timer?.cancel()
+    }
     
     func reloadView() {
         reloadTrigger = UUID()
