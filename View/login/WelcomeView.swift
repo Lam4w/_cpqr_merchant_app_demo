@@ -10,9 +10,24 @@ import SwiftUI
 struct WelcomeView: View {
     var body: some View {
         ZStack{
-            Color(.blue)
-            
             VStack{
+                
+                Spacer()
+                
+                VStack {
+//                    Text("Powered by")
+//                        .foregroundColor(.white)
+//                        .font(.title)
+//                        .bold()
+                    
+                    Image("napas_trans")
+                        .resizable()
+                    //                                            .scaledToFit()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 100, height: 50)
+                        .padding(.horizontal, 5)
+                }
+                
                 Spacer()
                 
                 Text("Ứng dụng dành cho cửa hàng")
@@ -61,6 +76,7 @@ struct WelcomeView: View {
             }
             .padding(.horizontal, 20)
         }
+        .background(Color.accent)
         .navigationTitle("")
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)

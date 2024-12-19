@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct cpqr_merchant_demoApp: App {
-    @StateObject var mainVM = MainViewModel.share
+    @StateObject var mainVM = MainViewModel.shared
     
     var body: some Scene {
         WindowGroup {

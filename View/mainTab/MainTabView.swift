@@ -10,18 +10,25 @@ import SwiftUIFontIcon
 
 struct MainTabView: View {
     @StateObject var homeVM = HomeViewModel.shared
+    @StateObject var mainVM = MainViewModel.shared
     
     var body: some View {
         GeometryReader{ _ in
             ZStack{
-                if(homeVM.selectTab == 0) {
-                    HomeView()
-                }else if(homeVM.selectTab == 1) {
+                if(homeVM.selectTab == 0 && mainVM.isMerchant) {
+                    MerchantHomeView()
+                }else if(homeVM.selectTab == 0) {
+                    ClientHomeView()
+                }else if(homeVM.selectTab == 1 && mainVM.isMerchant) {
                     CheckoutView()
+                }else if(homeVM.selectTab == 1) {
+                    QRView()
                 }else if(homeVM.selectTab == 2) {
                     AccountView()
                 }else if(homeVM.selectTab == 3) {
-                    QRView()
+                    AccountView()
+                }else if(homeVM.selectTab == 4) {
+                    AccountView()
                 }
                 
                 VStack{
@@ -29,7 +36,7 @@ struct MainTabView: View {
                     Spacer()
                     
                     HStack{
-                        TabButton(title: "Cửa hàng", icon: .md_home, isSelect: homeVM.selectTab == 0) {
+                        TabButton(title: "Trang chính", icon: .md_home, isSelect: homeVM.selectTab == 0) {
                             DispatchQueue.main.async {
                                 withAnimation {
                                     homeVM.selectTab = 0
@@ -37,10 +44,26 @@ struct MainTabView: View {
                             }
                         }
                         
-                        TabButton(title: "Tạo đơn hàng", icon: .md_qr_scanner, isSelect: homeVM.selectTab == 1) {
+                        TabButton(title: "Lịch sử", icon: .md_stats, isSelect: homeVM.selectTab == 3) {
+                            DispatchQueue.main.async {
+                                withAnimation {
+                                    homeVM.selectTab = 3
+                                }
+                            }
+                        }
+                        
+                        TabButton(title: "QR", icon: .md_qr_scanner, isSelect: homeVM.selectTab == 1) {
                             DispatchQueue.main.async {
                                 withAnimation {
                                     homeVM.selectTab = 1
+                                }
+                            }
+                        }
+                        
+                        TabButton(title: "Thẻ", icon: .md_card, isSelect: homeVM.selectTab == 4) {
+                            DispatchQueue.main.async {
+                                withAnimation {
+                                    homeVM.selectTab = 4
                                 }
                             }
                         }

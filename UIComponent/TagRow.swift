@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct TransactionRow: View {
-    @State var txObj: TransactionDetail = TransactionDetail()
+struct TagRow: View {
+    @State var txObj: TagDetail = TagDetail()
 
     var body: some View {
         VStack{
@@ -37,7 +37,7 @@ struct TransactionRow: View {
 
 struct TransactionRow_Preview: PreviewProvider {
     static var previews: some View {
-        TransactionRow(txObj: TransactionDetail(tag: "qqwe", tagDetail: "52", value: "qweqeqwe"))
+        TagRow(txObj: TagDetail(tag: "qqwe", tagDetail: "52", value: "qweqeqwe"))
         .padding(.horizontal, 20)
     }
 }

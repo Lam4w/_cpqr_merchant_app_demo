@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LoginView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-    @StateObject var loginVM = MainViewModel.share
+    @StateObject var loginVM = MainViewModel.shared
     
     var body: some View {
         GeometryReader{ _ in
@@ -46,22 +46,18 @@ struct LoginView: View {
                         .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(.black)
                     
-                    //                Text("đăng nhập dịch vụ")
-                    //                    .font(.title3)
-                    //                    .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
-                    //                    .foregroundColor(.black)
+                    InputField(title: "MerchantID", placeHolder: "Nhập tên tài khoản", txt: $loginVM.txtId)
                     
-                    InputField(title: "MarchantID", placeHolder: "Nhập mã cửa hàng", txt: $loginVM.txtId)
-                    
-                    InputField(title: "MarchantID", placeHolder: "Nhập mật khẩu", txt: $loginVM.txtId)
+                    InputField(title: "MerchantID", placeHolder: "Nhập mật khẩu", txt: $loginVM.txtId)
                     
                     NavigationLink{
                         
                     } label: {
-                        Text("quên mật khẩu?")
+                        Text("Quên mật khẩu?")
                             .foregroundColor(.black.opacity(0.6))
                             .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .trailing)
                             .padding(.top, 5)
+                            .underline()
                     }
                     
                     Spacer()
@@ -79,7 +75,7 @@ struct LoginView: View {
                     } label: {
                         HStack{
                             //add font size
-                            Text("Chưa đăng ký cửa hàng?")
+                            Text("Chưa đăng ký?")
                                 .foregroundColor(.black.opacity(0.7))
                             
                             //add font size

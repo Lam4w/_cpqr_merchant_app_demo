@@ -14,4 +14,6 @@ struct Path {
      
     static let PURCHASE = BASE_URL + "/api/purchase"
     static let REVERSAL = BASE_URL + "/api/reversal"
+    static let GET_QR = BASE_URL + "/api/qr"
+    static let GET_NOTI_PURCHASE = BASE_URL + "/api/qr/noti"
 }

@@ -10,7 +10,7 @@ import SwiftUIFontIcon
 
 struct TabButton: View {
     @State var title: String = "Title"
-    @State var icon : IonIconsCode = .md_qr_scanner
+    @State var icon : IonIconsCode = .md_home
     var isSelect: Bool = false
     var selected: (()->())
     
@@ -23,10 +23,20 @@ struct TabButton: View {
                     .padding(0)
                 
                 Text(title)
-                    .font(.subheadline)
+                    .font(.system(size: 12))
+                
+                if (isSelect) {
+                    VStack {
+                        
+                    }
+                    .padding(4)
+                    .background(Color.accent)
+                    .foregroundColor(.accent)
+                    .clipShape(.circle)
+                }
             }
         }
-        .foregroundColor(isSelect ? .blue : .black )
+        .foregroundColor(isSelect ? .accent : .foreground )
         .frame(minWidth: 0, maxWidth: .infinity)
     }
 }

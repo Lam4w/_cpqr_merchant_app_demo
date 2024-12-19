@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-struct TransactionsDetail: View {    
+struct QrDetails: View {
     @StateObject var scannerVM = CheckoutViewModel.shared
     
     var body: some View {
         ZStack{
-            if(scannerVM.transactions.count == 0) {
+            if(scannerVM.tags.count == 0) {
                 Text("No details")
                     .font(.title)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
             }
             ScrollView{
                 LazyVStack {
-                    ForEach( scannerVM.transactions , id: \.id, content: {
+                    ForEach( scannerVM.tags , id: \.id, content: {
                         txObj in
-                        TransactionRow(txObj: txObj)
+                        TagRow(txObj: txObj)
                     })
                 }
                 .padding(10)
@@ -76,5 +76,5 @@ struct TransactionsDetail: View {
 }
 
 #Preview {
-    TransactionsDetail()
+    QrDetails()
 }

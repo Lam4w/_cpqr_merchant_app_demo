@@ -17,15 +17,6 @@ struct QRView: View {
     var body: some View {
         VStack {
             HStack{
-//                FontIcon.button(.awesome5Solid(code: .chevron_left), action: {
-//                    mode.wrappedValue.dismiss()
-//                },fontsize: 25)
-//                    .foregroundColor(.gray)
-//                Image(systemName: "qrcode.viewfinder")
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 30, height: 20)
-                
                 Text("Tạo QR thanh toán")
                     .font(.title)
                     .bold()
@@ -58,7 +49,7 @@ struct QRView: View {
             VStack{
                 VStack{
                     Spacer()
-                    Image(uiImage: qrVM.callServiceGetQR())
+                    Image(uiImage: qrVM.qr)
                         .interpolation(.none)
                         .resizable()
                         .scaledToFit()
@@ -105,6 +96,9 @@ struct QRView: View {
         .frame(width: .screenWidth, height: .screenHeight)
         .background(.white)
         .cornerRadius(20)
+        .onAppear{
+            qrVM.callServiceGetQR()
+        }
     }
     
     func reloadView() {
@@ -112,6 +106,6 @@ struct QRView: View {
     }
 }
 
-#Preview {
-    QRView()
-}
+//#Preview {
+//    QRView()
+//}

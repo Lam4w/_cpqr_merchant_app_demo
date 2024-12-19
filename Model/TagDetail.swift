@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TransactionDetail: Identifiable {
+struct TagDetail: Identifiable {
     var id: UUID
     var tag: String = ""
     var tagDetail: String = ""

@@ -43,4 +43,35 @@ class ServiceCall {
             task.resume()
         }
     }
+    
+    class func get(path: String, withSuccess: @escaping ( (_ responseObj: Data?) ->() ), failure: @escaping ( (_ error: Error?) ->() ) ) {
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            var request = URLRequest(url: URL(string: path)!,timeoutInterval: 20)
+            
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(Utils.currentMilliseconds(), forHTTPHeaderField: "timestamp")
+            request.httpMethod = "GET"
+            
+            let sessionConfig = URLSessionConfiguration.default
+            sessionConfig.timeoutIntervalForRequest = 60.0
+            sessionConfig.timeoutIntervalForResource = 60.0
+            
+            let session = URLSession(configuration: sessionConfig)
+
+            let task = session.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    DispatchQueue.main.async {
+                        failure(error)
+                    }
+                }
+                if let data = data {
+                    DispatchQueue.main.async {
+                        withSuccess(data)
+                    }
+                }
+            }
+            task.resume()
+        }
+    }
 }

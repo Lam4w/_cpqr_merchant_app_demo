@@ -43,7 +43,7 @@ class CheckoutViewModel: ObservableObject {
     ]
     var chipData: String = ""
     
-    @Published var transactions: [TransactionDetail] = []
+    @Published var tags: [TagDetail] = []
     @Published var token: String = ""
     @Published var purchaseResponse: PurchaseResponse?
     @Published var isShowScanner: Bool = false
@@ -138,11 +138,11 @@ class CheckoutViewModel: ObservableObject {
             
             if (actualTag == "85" || actualTag == "50" || actualTag == "5F20") {
                 let stringValue = Converter.hexToString(hex: value)
-                let td = TransactionDetail(tag: actualTag, tagDetail: tagName, value: stringValue!)
-                self.transactions.append(td)
+                let td = TagDetail(tag: actualTag, tagDetail: tagName, value: stringValue!)
+                self.tags.append(td)
             } else {
-                let td = TransactionDetail(tag: actualTag, tagDetail: tagName, value: String(formattedNumberString))
-                self.transactions.append(td)
+                let td = TagDetail(tag: actualTag, tagDetail: tagName, value: String(formattedNumberString))
+                self.tags.append(td)
             }
             
             if (actualTag == "61" || actualTag == "62" || actualTag == "63") {
@@ -228,14 +228,14 @@ class CheckoutViewModel: ObservableObject {
                             // Add the overall value of the constructed data
                             if let overallValue = nestedDict["value"] as? String {
                                 let actualTag = Tag.getTagName(tag: tag)
-                                transactions.append(TransactionDetail(tag: tag, tagDetail: actualTag, value: overallValue))
+                                tags.append(TagDetail(tag: tag, tagDetail: actualTag, value: overallValue))
                             }
                         }
                     } else {
                         // Add the tag and its value if it's not constructed
                         if let stringValue = value as? String {
                             let actualTag = Tag.getTagName(tag: tag)
-                            transactions.append(TransactionDetail(tag: tag, tagDetail: actualTag, value: stringValue))
+                            tags.append(TagDetail(tag: tag, tagDetail: actualTag, value: stringValue))
                         }
                     }
                 }
@@ -280,7 +280,7 @@ class CheckoutViewModel: ObservableObject {
         var foundTags: Set<String> = []
         var missingTags: [String] = []
         
-        for tx in transactions {
+        for tx in tags {
             if mandatoryTags.contains(tx.tag) {
                 foundTags.insert(tx.tag)
             }
@@ -293,7 +293,7 @@ class CheckoutViewModel: ObservableObject {
         }
         
         for tag in missingTags {
-            transactions.append(TransactionDetail(tag: tag, tagDetail: Tag.getTagName(tag: tag), value: "Missing"))
+            tags.append(TagDetail(tag: tag, tagDetail: Tag.getTagName(tag: tag), value: "Missing"))
         }
         
         print(missingTags)
@@ -304,7 +304,7 @@ class CheckoutViewModel: ObservableObject {
 
         self.parseTransactions(tlvString: mockQRData)
         self.checkMTags()
-        for tx in self.transactions {
+        for tx in self.tags {
             print("tag name: \(tx.tag)")
             print("tag detail: \(tx.tagDetail)")
             print("tag value: \(tx.value)")
@@ -457,8 +457,7 @@ class CheckoutViewModel: ObservableObject {
             handleError(message: "Empty response data")
             return
         }
-        
-        let decoder = JSONDecoder()
+
         do {
             self.purchaseResponse = try decodeResponse(from: responseData)
         } catch {

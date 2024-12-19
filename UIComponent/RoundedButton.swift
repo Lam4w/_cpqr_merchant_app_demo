@@ -21,7 +21,7 @@ struct RoundedButton: View {
                 .font(.title2)
         }
         .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 60, maxHeight: 60)
-        .background(.blue)
+        .background(Color.accent)
         .cornerRadius(20)
     }
 }

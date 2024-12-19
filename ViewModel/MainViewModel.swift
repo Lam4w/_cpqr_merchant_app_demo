@@ -8,12 +8,13 @@
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    static var share: MainViewModel = MainViewModel()
+    static var shared: MainViewModel = MainViewModel()
     
     @Published var title: String = ""
     @Published var txtId: String = ""
     @Published var txtPassword: String = ""
     @Published var isUserLogin: Bool = false
+    @Published var isMerchant: Bool = false
     
     //todo: api handling
     func logIn() {
@@ -21,7 +22,10 @@ class MainViewModel: ObservableObject {
     }
     
     func setData() {
+        print("id field: \(txtId)")
+        if self.txtId == "merchant" || self.txtId == "2" {
+            self.isMerchant = true
+        }
         self.isUserLogin = true
-        print(self.isUserLogin)
     }
 }
