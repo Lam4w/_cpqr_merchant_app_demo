@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CountdownView: View {
-    @State private var timeRemaining = 180 // 3 phút = 180 giây
+    @State private var timeRemaining = 180 // 3 minutes = 180 seconds
     @State private var timer: Timer?
     
     var body: some View {
@@ -26,13 +26,13 @@ struct CountdownView: View {
             }
         }
         .onDisappear {
-            timer?.invalidate() // Dừng timer khi view biến mất
+            timer?.invalidate() // stop the timer when the remaining time runs out
         }
     }
     
-    // Function khởi động đếm ngược
+    // start the counr down
     func startCountdown() {
-        timer?.invalidate() // Xóa timer cũ nếu có
+        timer?.invalidate() // delete the old timer if exists
         timeRemaining = 180
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if timeRemaining > 0 {
@@ -44,13 +44,13 @@ struct CountdownView: View {
         }
     }
     
-    // Function gọi khi thời gian đếm ngược kết thúc
+    // called when the timer finishes
     func countdownDidFinish() {
         print("Thời gian kết thúc!")
         // Gọi bất kỳ logic nào bạn muốn ở đây
     }
     
-    // Function định dạng thời gian hiển thị
+    // format the display time
     func formatTime(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let seconds = seconds % 60
