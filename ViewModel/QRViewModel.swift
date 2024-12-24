@@ -14,42 +14,45 @@ class QRViewModel: ObservableObject {
     
     @Published var showError = false
     @Published var errorMessage = ""
-    @Published var qr = UIImage(systemName: "xmark") ?? UIImage()
- 
+    @Published var isSucccessful: Bool = false
+    @Published var qrData: UIImage? = nil
+    
     let context = CIContext()
     let filter = CIFilter.qrCodeGenerator()
     
-    func callServiceGetQR() {
-        ServiceCall.get(path: Path.GET_QR) { responseObj in
+    func callServiceGetQR() -> () {
+        return ServiceCall.get(path: Path.GET_QR) { responseObj in
             guard let responseData = responseObj else {
                 self.handleError(message: "Empty response data")
                 return
             }
-
+            
             do {
                 let qrResponse = try self.decodeResponse(from: responseData)
                 
-                let stringData = Data(qrResponse.payload.qr.utf8)
+                self.qrData = self.setQr(qrResponse.payload.qr)
                 
-                self.filter.setValue(stringData, forKey: "inputMessage")
-                
-                if let qrCodeImage = self.filter.outputImage {
-                    if let qrCodeCGImage = self.context.createCGImage(qrCodeImage, from: qrCodeImage.extent) {
-                        self.qr =  UIImage(cgImage: qrCodeCGImage)
-                    }
-                }
-                
-                self.qr = UIImage(systemName: "xmark") ?? UIImage()
             } catch {
-//                self.isLoading = false
                 self.handleError(message: "Decoding error: \(error)")
                 return
             }
         } failure: { error in
-//            self.isLoading = false
             print("Service call get qr failed with error: \(String(describing: error))")
-            self.handleError(message: "Server error")
         }
+    }
+    
+    func setQr(_ response: String) -> UIImage {
+        let stringData = Data(response.utf8)
+
+        self.filter.setValue(stringData, forKey: "inputMessage")
+        
+        if let qrCodeImage = self.filter.outputImage {
+            if let qrCodeCGImage = self.context.createCGImage(qrCodeImage, from: qrCodeImage.extent) {
+                return UIImage(cgImage: qrCodeCGImage)
+            }
+        }
+        
+        return UIImage(systemName: "paperplane") ?? UIImage()
     }
     
     func decodeResponse(from data: Data) throws -> GenerateQrResponse {

@@ -21,6 +21,11 @@ class MainViewModel: ObservableObject {
         self.setData()
     }
     
+    func logOut() {
+        self.isUserLogin = false
+        self.isMerchant = false
+    }
+    
     func setData() {
         print("id field: \(txtId)")
         if self.txtId == "merchant" || self.txtId == "2" {

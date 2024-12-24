@@ -28,7 +28,7 @@ struct PaymentResultView: View {
                         checkoutVM.showPaymentResult = false
                         checkoutVM.showTransactionConfirmation = false
                     } label: {
-                        FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .blue)
+                        FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .accent)
                             .padding(12)
                             .background(.ultraThinMaterial)
                             .clipShape(.circle)
@@ -37,9 +37,9 @@ struct PaymentResultView: View {
                 .padding(.top, 15)
                 
                 if checkoutVM.purchaseResponse?.payload.result.code == "00" {
-                    FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .blue)
+                    FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .primary)
                         .padding(18)
-                        .background(.ultraThinMaterial)
+                        .background(Color.mutedBackground)
                         .clipShape(.circle)
                     
                     Text("Giao dịch thành công!")

@@ -44,7 +44,7 @@ class ServiceCall {
         }
     }
     
-    class func get(path: String, withSuccess: @escaping ( (_ responseObj: Data?) ->() ), failure: @escaping ( (_ error: Error?) ->() ) ) {
+    class func get(path: String, withSuccess: @escaping ( (_ responseObj: Data?) -> () ), failure: @escaping ( (_ error: Error?) ->() ) ) {
         
         DispatchQueue.global(qos: .userInitiated).async {
             var request = URLRequest(url: URL(string: path)!,timeoutInterval: 20)

@@ -45,11 +45,11 @@ struct MainTabView: View {
                         }
                         
                         TabButton(title: "Lịch sử", icon: .md_stats, isSelect: homeVM.selectTab == 3) {
-                            DispatchQueue.main.async {
-                                withAnimation {
-                                    homeVM.selectTab = 3
-                                }
-                            }
+//                            DispatchQueue.main.async {
+//                                withAnimation {
+//                                    homeVM.selectTab = 3
+//                                }
+//                            }
                         }
                         
                         TabButton(title: "QR", icon: .md_qr_scanner, isSelect: homeVM.selectTab == 1) {
@@ -61,19 +61,19 @@ struct MainTabView: View {
                         }
                         
                         TabButton(title: "Thẻ", icon: .md_card, isSelect: homeVM.selectTab == 4) {
-                            DispatchQueue.main.async {
-                                withAnimation {
-                                    homeVM.selectTab = 4
-                                }
-                            }
+//                            DispatchQueue.main.async {
+//                                withAnimation {
+//                                    homeVM.selectTab = 4
+//                                }
+//                            }
                         }
                         
                         TabButton(title: "Tài khoản", icon: .md_person, isSelect: homeVM.selectTab == 2) {
-                            DispatchQueue.main.async {
-                                withAnimation {
-                                    homeVM.selectTab = 2
-                                }
-                            }
+//                            DispatchQueue.main.async {
+//                                withAnimation {
+//                                    homeVM.selectTab = 2
+//                                }
+//                            }
                         }
                     }
                     .padding(.top, 15)

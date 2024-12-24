@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ClientOverview: View {
+    @StateObject var homeVM = HomeViewModel.shared
+    
     var body: some View {
         VStack {
             HStack{
@@ -62,13 +64,13 @@ struct ClientOverview: View {
             
             HStack {
                 Button(action: {
-                    
+                    homeVM.selectTab = 1
                 }) {
                     HStack {
                         Image(systemName: "qrcode")
                         
                         Text("Tạo mã QR")
-                            .font(.subheadline)
+                            .font(.system(size: 14))
                     }
                 }
                 .padding(.horizontal, 12)
@@ -83,7 +85,7 @@ struct ClientOverview: View {
                     Image(systemName: "arrow.left.arrow.right")
                     
                     Text("Chuyển tiền")
-                        .font(.subheadline)
+                        .font(.system(size: 14))
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 12)

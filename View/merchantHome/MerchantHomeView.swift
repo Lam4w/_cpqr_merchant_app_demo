@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftUIFontIcon
 
 struct MerchantHomeView: View {
+    @StateObject var loginVM = MainViewModel.shared
     var body: some View {
         VStack {
             ScrollView {
@@ -27,11 +28,13 @@ struct MerchantHomeView: View {
                                 .padding(12)
                                 .background(Color(.white))
                                 .clipShape(.circle)
-        
-                            FontIcon.button(.ionicon(code: .md_list), action: {},fontsize: 30)
+                            FontIcon.button(.ionicon(code: .md_log_out), action: {
+                                loginVM.logOut()
+                            }, fontsize: 30)
                                 .padding(12)
-                                .background(Color(.white))
+                                .background(Color.white)
                                 .clipShape(.circle)
+                                .foregroundColor(.black)
                         }
                         .padding(.horizontal, 15)
                         .padding(.top, 30)

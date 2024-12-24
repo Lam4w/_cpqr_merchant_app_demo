@@ -84,7 +84,7 @@ struct CheckoutView: View {
                     HStack{
                         Spacer()
                         
-                        FontIcon.text(.ionicon(code: .md_pricetag),fontsize: 23, color: .blue)
+                        FontIcon.text(.ionicon(code: .md_pricetag),fontsize: 23, color: .accent)
                             .padding(5)
                         
                         Text("Thêm nội dung thanh toán")
@@ -97,28 +97,43 @@ struct CheckoutView: View {
             Spacer()
             //                .frame(height: 280)
             VStack{
-                VStack {
-                    Text("Bằng cách tiếp tục, bạn đồng ý với")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+//                VStack {
+//                    Text("Bằng cách tiếp tục, bạn đồng ý với")
+//                        .font(.subheadline)
+//                        .foregroundColor(.gray)
+//                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+//                    
+//                    HStack{
+//                        Text("Điều khoản dịch vụ")
+//                            .font(.subheadline)
+//                            .foregroundColor(.black)
+//                        
+//                        Text("và")
+//                            .font(.subheadline)
+//                            .foregroundColor(.gray)
+//                        
+//                        Text("Chính sách bảo mật.")
+//                            .font(.subheadline)
+//                            .foregroundColor(.black)
+//                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+//                    }
+//                }
+//                .padding(.vertical, .screenWidth * 0.03)
+                HStack {
+                    FontIcon.text(.awesome5Solid(code: .shield_alt), fontsize: 18)
+                        .foregroundColor(.green)
                     
-                    HStack{
-                        Text("Điều khoản dịch vụ")
-                            .font(.subheadline)
-                            .foregroundColor(.black)
-                        
-                        Text("và")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        
-                        Text("Chính sách bảo mật.")
-                            .font(.subheadline)
-                            .foregroundColor(.black)
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                    }
+                    Text("Giao dịch này được đảm bảo bởi")
+                        .foregroundColor(.gray)
+                        .font(.subheadline)
+                    
+                    Image("napas")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 18)
+                        .padding(.horizontal, 5)
+                        .padding(.top, 3)
                 }
-                .padding(.vertical, .screenWidth * 0.03)
                 
                 RoundedButton(title: "Quét mã QR") {
                     if amount.isEmpty {

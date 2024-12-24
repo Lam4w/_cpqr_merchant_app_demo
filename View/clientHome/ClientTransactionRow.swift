@@ -34,20 +34,20 @@ struct ClientTransactionRow: View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 10) {
                 Text(name)
-                    .font(.custom("Ubuntu-Bold", size: 14))
+                    .font(.system(size: 14))
                 
                 HStack(spacing: 4) {
                     Text(date)
                         .foregroundColor(Color(.systemGray))
                 }
-                .font(.custom("Ubuntu-Regular", size: 12))
+                .font(.system(size: 16))
             }
             
             Spacer()
             
             HStack(spacing: 4) {
                 Text("\(statusAmount) \(amount) vnd")
-                    .font(.custom("Ubuntu-Bold", size: 15))
+                    .font(.system(size: 16))
                     .foregroundColor(statusColor)
             }
         }

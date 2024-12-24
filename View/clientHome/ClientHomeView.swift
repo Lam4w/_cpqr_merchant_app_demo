@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftUIFontIcon
 
 struct ClientHomeView: View {
+    @StateObject var loginVM = MainViewModel.shared
+    
     var body: some View {
         VStack {
             ScrollView {
@@ -26,6 +28,7 @@ struct ClientHomeView: View {
                                     .padding(12)
                                     .background(Color(.white))
                                     .clipShape(.circle)
+                                    .foregroundColor(.black.opacity(0.7))
                                 
                                 VStack {
                                     HStack {
@@ -46,13 +49,16 @@ struct ClientHomeView: View {
                             
                             FontIcon.button(.ionicon(code: .md_notifications), action: {},fontsize: 30)
                                 .padding(12)
-                                .background(Color(.white))
+                                .background(Color.white)
                                 .clipShape(.circle)
-        
-                            FontIcon.button(.ionicon(code: .md_list), action: {},fontsize: 30)
+                            
+                            FontIcon.button(.ionicon(code: .md_log_out), action: {
+                                loginVM.logOut()
+                            },fontsize: 30)
                                 .padding(12)
-                                .background(Color(.white))
+                                .background(Color.white)
                                 .clipShape(.circle)
+                                .foregroundColor(.black)
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 50)
@@ -81,10 +87,7 @@ struct ClientHomeView: View {
                         .shadow(color: .foreground.opacity(0.3), radius: 15, x: 0, y: 0)
                         .padding(.top, 140)
                         .padding(.horizontal, 20)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(Color(hex: "ECEDF3"), lineWidth: 2)
-                        )
+//                        6
                     }
                 
                 }
@@ -92,7 +95,7 @@ struct ClientHomeView: View {
             
         }
         .ignoresSafeArea()
-        .padding(.bottom, .bottomInsets + 60)
+        .padding(.bottom, .bottomInsets + 80)
         .disableBounces()
     }
 }

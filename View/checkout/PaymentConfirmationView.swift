@@ -35,7 +35,7 @@ struct PaymentConfirmationView: View {
                             checkoutVM.showTransactionConfirmation = false
                             
                         } label: {
-                            FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .blue)
+                            FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .accent)
                                 .padding(12)
                                 .background(.ultraThinMaterial)
                                 .clipShape(.circle)
@@ -46,19 +46,19 @@ struct PaymentConfirmationView: View {
                     //                Spacer()
                     
                     VStack{
-                        HStack {
-                            Text("Nội dung")
-                                .font(.title3)
-                                .foregroundColor(.black)
-                                .frame(height: 46)
-                            
-                            Spacer()
-                            
-                            Text("Thanh toan ABC")
-                                .font(.title3)
-                                .foregroundColor(.black)
-                                .frame(height: 46)
-                        }
+//                        HStack {
+//                            Text("Nội dung")
+//                                .font(.title3)
+//                                .foregroundColor(.black)
+//                                .frame(height: 46)
+//                            
+//                            Spacer()
+//                            
+//                            Text("Thanh toan ABC")
+//                                .font(.title3)
+//                                .foregroundColor(.black)
+//                                .frame(height: 46)
+//                        }
                         
                         //                    Divider()
                         
@@ -108,7 +108,7 @@ struct PaymentConfirmationView: View {
                                     .font(.title)
                                     .bold()
                                     .foregroundColor(.blue)
-                                Text("vnd")
+                                Text("VND")
                                     .multilineTextAlignment(.center)
                                     .font(.title3)
                                     .foregroundColor(.blue)

@@ -11,8 +11,15 @@ struct LoginView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     @StateObject var loginVM = MainViewModel.shared
     
+    private enum Field: Int {
+        case textIdEdit
+        case textPasswordEdit
+    }
+    
+    @FocusState private var focusField: Field?
+    
     var body: some View {
-        GeometryReader{ _ in
+        GeometryReader { _ in
             VStack {
                 Color(.white)
                 VStack{
@@ -46,9 +53,29 @@ struct LoginView: View {
                         .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(.black)
                     
-                    InputField(title: "MerchantID", placeHolder: "Nhập tên tài khoản", txt: $loginVM.txtId)
+                    Text("Tài khoản")
+                        .foregroundColor(.white)
+                        .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment:  .leading)
                     
-                    InputField(title: "MerchantID", placeHolder: "Nhập mật khẩu", txt: $loginVM.txtId)
+                    TextField("Nhập tên tài khoản", text: $loginVM.txtId)
+                        .keyboardType(/*@START_MENU_TOKEN@*/.default/*@END_MENU_TOKEN@*/)
+                        .disableAutocorrection(true)
+                        .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
+                        .frame(height: 40)
+                        .font(.title3)
+                        .focused($focusField, equals: .textIdEdit)
+                    
+                    Text("Mật khẩu")
+                        .foregroundColor(.white)
+                        .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, alignment:  .leading)
+                    
+                    TextField("Nhập mật khẩu", text: $loginVM.txtPassword)
+                        .keyboardType(/*@START_MENU_TOKEN@*/.default/*@END_MENU_TOKEN@*/)
+                        .disableAutocorrection(true)
+                        .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
+                        .frame(height: 40)
+                        .font(.title3)
+                        .focused($focusField, equals: .textPasswordEdit)
                     
                     NavigationLink{
                         
@@ -96,6 +123,11 @@ struct LoginView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
         .ignoresSafeArea()
+        .onTapGesture {
+            if (focusField != nil) {
+                focusField = nil
+            }
+        } 
     }
 }
 

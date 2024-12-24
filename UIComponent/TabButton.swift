@@ -18,7 +18,7 @@ struct TabButton: View {
         Button {
             selected()
         } label: {
-            VStack{
+            VStack (spacing: 2){
                 FontIcon.text(.ionicon(code: icon),fontsize: 35)
                     .padding(0)
                 
@@ -29,7 +29,7 @@ struct TabButton: View {
                     VStack {
                         
                     }
-                    .padding(4)
+                    .padding(3)
                     .background(Color.accent)
                     .foregroundColor(.accent)
                     .clipShape(.circle)

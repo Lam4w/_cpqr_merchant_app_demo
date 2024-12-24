@@ -28,7 +28,7 @@ struct QRView: View {
                 Spacer()
                 
                 Button {
-//                    mode.wrappedValue.dismiss()
+                    //                    mode.wrappedValue.dismiss()
                     homeVM.selectTab = 0
                 } label: {
                     FontIcon.text(.materialIcon(code: .close),fontsize: 20, color: .black)
@@ -51,12 +51,22 @@ struct QRView: View {
             VStack{
                 VStack{
                     Spacer()
-                    Image(uiImage: qrVM.qr)
-                        .interpolation(.none)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 250, height: 250)
-                        .id(reloadTrigger)
+                    if let qrImage = qrVM.qrData {
+                        Image(uiImage: qrImage)
+                            .interpolation(.none)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 250, height: 250)
+                            .id(reloadTrigger)
+                    } else {
+                        Image(uiImage: UIImage(systemName: "xmark") ?? UIImage())
+                            .interpolation(.none)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 250, height: 250)
+                            .id(reloadTrigger)
+                    }
+                    
                     Spacer()
                 }
                 .frame(width: .screenWidth - 60, height: 350)
@@ -88,7 +98,8 @@ struct QRView: View {
             Spacer()
             
             RoundedButton(title: "Tạo mã QR mới") {
-                reloadView()
+//                    reloadView()
+                qrVM.callServiceGetQR()
             }
             .padding(.bottom, .bottomInsets + 80)
             
@@ -103,25 +114,6 @@ struct QRView: View {
         }
     }
 
-//    func startTimer() {
-//        let queue = DispatchQueue.global(qos: .userInitiated)
-//        let newTimer = DispatchSource.makeTimerSource(queue: queue)
-//        newTimer.schedule(deadline: .now(), repeating: 10.0)
-//
-//        newTimer.setEventHandler {
-//            DispatchQueue.main.async {
-////                timerAction = "Timer fired at \(Date())"
-//            }
-//        }
-//
-//        newTimer.resume()
-//        timer = newTimer
-//    }
-//
-//    func stopTimer() {
-//        timer?.cancel()
-//    }
-//    
     func reloadView() {
         reloadTrigger = UUID()
     }
