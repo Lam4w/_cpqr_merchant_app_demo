@@ -7,17 +7,17 @@
 
 import Foundation
 
-struct FundSourceModel: Identifiable {
+struct FundSource: Identifiable {
     var id: UUID
     var type: String = ""
     var image: String = ""
-    var num: String = ""
+    var token: String = ""
     
-    init(type: String, image: String, num: String) {
+    init(type: String, image: String, token: String) {
         self.id = UUID()
         self.type = type
         self.image = image
-        self.num = num
+        self.token = token
     }
     
     init() {

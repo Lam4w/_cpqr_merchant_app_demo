@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FundSourceListView: View {
     @Binding var isShowing: Bool
+    @StateObject var QrVM = QRViewModel.shared()
     @State private var currHeight: CGFloat = 400
     
     let minHeight: CGFloat = 400
@@ -47,11 +48,16 @@ struct FundSourceListView: View {
             ZStack {
                 VStack {
                     // list of fund sources
-                    FundSourceView(isSelected: true)
-                    Divider()
-                    FundSourceView(isSelected: false)
-                    Divider()
-                    FundSourceView(isSelected: false)
+                    ForEach(QrVM.fundSourceList , id: \.id, content: {
+                        fsObj in
+                        FundSourceView(isShowing: $isShowing, fundSrc: fsObj)
+                    })
+                    
+                    // FundSourceView(isSelected: true)
+                    // Divider()
+                    // FundSourceView(isSelected: false)
+                    // Divider()
+                    // FundSourceView(isSelected: false)
                 }
             }
             .frame(maxHeight: .infinity)

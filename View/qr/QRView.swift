@@ -57,7 +57,7 @@ struct QRView: View {
                 } label: {
                     HStack {
                         HStack {
-                            Image("napas")
+                            Image(qrVM.curFundSource.image)
                                 .resizable()
                             //                                            .scaledToFit()
                                 .aspectRatio(contentMode: .fill)
@@ -72,7 +72,7 @@ struct QRView: View {
                         
                         VStack {
                             HStack {
-                                Text("Thẻ")
+                                Text(qrVM.curFundSource.type)
                                     .foregroundColor(.black)
                                     .multilineTextAlignment(.center)
                                     .font(.caption)
@@ -81,7 +81,7 @@ struct QRView: View {
                             }
                             
                             HStack {
-                                Text("970414 ... 9704")
+                                Text(qrVM.curFundSource.token)
                                     .foregroundColor(.black)
                                     .multilineTextAlignment(.center)
                                     .font(.caption)

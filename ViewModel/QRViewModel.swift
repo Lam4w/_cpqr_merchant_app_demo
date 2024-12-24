@@ -16,6 +16,8 @@ class QRViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var isSucccessful: Bool = false
     @Published var qrData: UIImage? = nil
+    @Published var fundSourceList = [FundSource(type: "Tài khoản", image: "napas", token: "121323463"), FundSource(type: "Thẻ", image: "napas", token: "123123132123123"), FundSource(type: "Thẻ", image: "napas", token: "12123123123123")]
+    @Published var curFundSource: FundSource = FundSource(type: "Tài khoản", image: "napas", token: "121323463")
     
     let context = CIContext()
     let filter = CIFilter.qrCodeGenerator()

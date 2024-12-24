@@ -9,63 +9,73 @@ import SwiftUI
 import SwiftUIFontIcon
 
 struct FundSourceView: View {
+    @StateObject var qrVM = QRViewModel.shared()
+    @Binding var isShowing: Bool
+    @State var fundSrc: FundSource = FundSource()
     var isSelected: Bool
     
     var body: some View {
-        HStack {
+        Button {
+            qrVM.curFundSource = fundSrc
+            isShowing = false
+        } label: {
             HStack {
                 HStack {
-                    Image("napas")
-                        .resizable()
-                    //                                            .scaledToFit()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 40, height: 12)
-                        .padding(.horizontal, 5)
-                        .padding(.top, 3)
-                }
-                .padding(.vertical, 7)
-                .padding(.horizontal, 5)
-                .background(.white)
-                .cornerRadius(5)
-                
-                VStack {
                     HStack {
-                        Text("Thẻ")
-                            .foregroundColor(.black)
-                            .multilineTextAlignment(.center)
-                            .font(.caption)
+                        Image(fundSrc.image)
+                            .resizable()
+                        //                                            .scaledToFit()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 40, height: 12)
+                            .padding(.horizontal, 5)
+                            .padding(.top, 3)
+                    }
+                    .padding(.vertical, 7)
+                    .padding(.horizontal, 5)
+                    .background(.white)
+                    .cornerRadius(5)
+                    
+                    VStack {
+                        HStack {
+                            Text(fundSrc.type)
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .font(.caption)
+                            
+                            Spacer()
+                        }
                         
-                        Spacer()
+                        HStack {
+                            Text(fundSrc.token)
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .font(.caption)
+                            Spacer()
+                        }
                     }
                     
-                    HStack {
-                        Text("970414 ... 9704")
-                            .foregroundColor(.black)
-                            .multilineTextAlignment(.center)
-                            .font(.caption)
-                        Spacer()
+                    Spacer()
+                    
+                    if qrVM.curFundSource.token == fundSrc.token {
+                        FontIcon.text(.ionicon(code: .md_checkmark_circle_outline), fontsize: 30)
+                            .foregroundColor(Color.green)
                     }
                 }
-                
-                Spacer()
-                
-                if isSelected {
-                    FontIcon.text(.ionicon(code: .md_checkmark_circle_outline), fontsize: 30)
-                        .foregroundColor(Color.green)
-                }
-                
+                .padding(.horizontal, 20)
+                .padding(.vertical, 17)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 17)
-        }
-        .background{
-            if isSelected {
-                Color.mutedBackground.opacity(0.6)
+            .background{
+                if qrVM.curFundSource.token == fundSrc.token {
+                    Color.mutedBackground.opacity(0.6)
+                }
             }
         }
     }
 }
 
-#Preview {
-    QRView()
+struct FundSourceView_Preview: PreviewProvider {
+    static var previews: some View {
+        FundSourceView(fundSrc: TagDetail(tag: "qqwe", tagDetail: "52", value: "qweqeqwe"))
+        .padding(.horizontal, 20)
+    }
 }
