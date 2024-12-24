@@ -48,6 +48,55 @@ struct QRView: View {
             }
             .padding(.bottom, 13)
             
+            Button {
+                
+            } label: {
+                HStack {
+                    HStack {
+                        Image("napas")
+                            .resizable()
+                        //                                            .scaledToFit()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 40, height: 12)
+                            .padding(.horizontal, 5)
+                            .padding(.top, 3)
+                    }
+                    .padding(.vertical, 7)
+                    .padding(.horizontal, 5)
+                    .background(.white)
+                    .cornerRadius(5)
+                    
+                    VStack {
+                        HStack {
+                            Text("Thẻ")
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .font(.caption)
+                            
+                            Spacer()
+                        }
+                        
+                        HStack {
+                            Text("970414 ... 9704")
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .font(.caption)
+                            Spacer()
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(Color.accent)
+                }
+                .padding(15)
+                
+            }
+            .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 60, maxHeight: 60)
+            .background(Color.foreground.opacity(0.05))
+            .cornerRadius(15)
+            
             VStack{
                 VStack{
                     Spacer()
@@ -56,20 +105,20 @@ struct QRView: View {
                             .interpolation(.none)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 250, height: 250)
+                            .frame(width: 230, height: 230)
                             .id(reloadTrigger)
                     } else {
                         Image(uiImage: UIImage(systemName: "xmark") ?? UIImage())
                             .interpolation(.none)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 250, height: 250)
+                            .frame(width: 230, height: 230)
                             .id(reloadTrigger)
                     }
                     
                     Spacer()
                 }
-                .frame(width: .screenWidth - 60, height: 350)
+                .frame(width: .screenWidth - 90, height: 300)
                 .background(Color.gray.opacity(0.05))
                 .cornerRadius(15)
                 
@@ -117,8 +166,10 @@ struct QRView: View {
     func reloadView() {
         reloadTrigger = UUID()
     }
+    
+    
 }
 
-//#Preview {
-//    QRView()
-//}
+#Preview {
+    QRView()
+}
