@@ -16,8 +16,10 @@ class QRViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var isSucccessful: Bool = false
     @Published var qrData: UIImage? = nil
-    @Published var fundSourceList = [FundSource(type: "Tài khoản", image: "napas", token: "121323463"), FundSource(type: "Thẻ", image: "napas", token: "123123132123123"), FundSource(type: "Thẻ", image: "napas", token: "12123123123123")]
-    @Published var curFundSource: FundSource = FundSource(type: "Tài khoản", image: "napas", token: "121323463")
+    @Published var fundSourceList = [FundSource(type: "Tài khoản", image: "vcb", token: "1016868016"), FundSource(type: "Thẻ", image: "napas", token: "970413 ... 9704"), FundSource(type: "Thẻ", image: "napas", token: "970414 ... 9705")]
+    @Published var curFundSource: FundSource = FundSource(type: "Tài khoản", image: "vcb", token: "1016868016")
+    @Published var timeRemaining = 180 // 3 minutes = 180 seconds
+    @Published var timer: Timer?
     
     let context = CIContext()
     let filter = CIFilter.qrCodeGenerator()
@@ -50,6 +52,7 @@ class QRViewModel: ObservableObject {
         
         if let qrCodeImage = self.filter.outputImage {
             if let qrCodeCGImage = self.context.createCGImage(qrCodeImage, from: qrCodeImage.extent) {
+                self.startCountdown()
                 return UIImage(cgImage: qrCodeCGImage)
             }
         }
@@ -66,5 +69,24 @@ class QRViewModel: ObservableObject {
         print(message)
         self.showError = true
         self.errorMessage = message
+    }
+    
+    // start the counr down
+    func startCountdown() {
+        self.timer?.invalidate() // delete the old timer if exists
+        self.timeRemaining = 180
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+            } else {
+                self.timer?.invalidate()
+                self.countdownDidFinish()
+            }
+        }
+    }
+    
+    // called when the timer finishes
+    func countdownDidFinish() {
+        self.callServiceGetQR()
     }
 }

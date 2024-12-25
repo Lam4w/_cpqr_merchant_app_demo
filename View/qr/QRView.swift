@@ -16,9 +16,6 @@ struct QRView: View {
     @State private var isShowingFundSource: Bool = false
     @State private var reloadTrigger = UUID()
     
-    @State private var timeRemaining = 180 // 3 minutes = 180 seconds
-    @State private var timer: Timer?
-    
     var body: some View {
         ZStack {
             VStack {
@@ -50,8 +47,13 @@ struct QRView: View {
                         .foregroundColor(.gray)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.bottom, 13)
+                .padding(.bottom, 8)
                 
+//                Text("Chọn nguồn tiền")
+//                    .font(.subheadline)
+//                    .foregroundColor(.black)
+//                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+//                
                 Button {
                     isShowingFundSource = true
                 } label: {
@@ -63,7 +65,7 @@ struct QRView: View {
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 40, height: 12)
                                 .padding(.horizontal, 5)
-                                .padding(.top, 3)
+                                .padding(.vertical, 5)
                         }
                         .padding(.vertical, 7)
                         .padding(.horizontal, 5)
@@ -128,13 +130,27 @@ struct QRView: View {
                     
                     Spacer()
                     
+                    HStack {
+                        Image("vietqr")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 35)
+                        
+                        Spacer()
+                        
+                        Image("napas")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 35)
+                    }
+                    
                     Text("Thời gian hiệu lực:")
                         .font(.subheadline)
                         .foregroundColor(.black)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                         .padding(.top, 2)
                     
-                    Text(formatTime(timeRemaining))
+                    Text(formatTime(qrVM.timeRemaining))
                         .font(.subheadline)
                         .foregroundColor(.red)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
@@ -142,7 +158,7 @@ struct QRView: View {
                     
                 }
                 .padding(28)
-                .frame(width: .screenWidth - 40, height: 400)
+                .frame(width: .screenWidth - 40, height: 440)
                 .overlay(
                     RoundedRectangle(cornerRadius: 15)
                         .stroke(Color.gray.opacity(0.5), lineWidth: 1)
@@ -171,25 +187,6 @@ struct QRView: View {
 
     func reloadView() {
         reloadTrigger = UUID()
-    }
-    
-    // start the counr down
-    func startCountdown() {
-        timer?.invalidate() // delete the old timer if exists
-        timeRemaining = 180
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            } else {
-                timer?.invalidate()
-                countdownDidFinish()
-            }
-        }
-    }
-    
-    // called when the timer finishes
-    func countdownDidFinish() {
-        qrVM.callServiceGetQR()
     }
     
     // format the display time

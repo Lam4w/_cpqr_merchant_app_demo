@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import SwiftUIFontIcon
 
 struct FundSourceListView: View {
     @Binding var isShowing: Bool
-    @StateObject var QrVM = QRViewModel.shared()
-    @State private var currHeight: CGFloat = 400
+    @StateObject var qrVM = QRViewModel.shared
+    @State private var currHeight: CGFloat = 450
     
     let minHeight: CGFloat = 400
-    let maxHeight: CGFloat = 580
+    let maxHeight: CGFloat = 650
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -38,7 +39,7 @@ struct FundSourceListView: View {
         VStack {
             ZStack {
                 Capsule()
-                    .frame(width: 40, height: 6)
+                    .frame(width: 50, height: 6)
             }
             .frame(height: 40)
             .frame(maxWidth: .infinity)
@@ -47,20 +48,42 @@ struct FundSourceListView: View {
             
             ZStack {
                 VStack {
+                    HStack {
+                        Text("Chọn tài khoản/thẻ")
+                    }
+//                    .padding(.horizontal, 20)
+//                    .padding(.vertical, 17)
+                    
                     // list of fund sources
-                    ForEach(QrVM.fundSourceList , id: \.id, content: {
+                    ForEach(qrVM.fundSourceList , id: \.id, content: {
                         fsObj in
                         FundSourceView(isShowing: $isShowing, fundSrc: fsObj)
                     })
                     
-                    // FundSourceView(isSelected: true)
-                    // Divider()
-                    // FundSourceView(isSelected: false)
-                    // Divider()
-                    // FundSourceView(isSelected: false)
+                    HStack {
+                        HStack {
+                            Image(systemName: "plus.square.on.square.fill")
+                                .foregroundColor(.accent)
+                        }
+                        .frame(width: 35, height: 12)
+                        .padding(.vertical, 7)
+                        .padding(.horizontal, 5)
+                        
+                        Text("Thêm nguồn tiền")
+                            .foregroundColor(.accent)
+                        
+                        Spacer()
+                        
+                        FontIcon.text(.awesome5Solid(code: .chevron_right))
+                            .foregroundColor(.accent)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 17)
                 }
             }
             .frame(maxHeight: .infinity)
+            
+            Spacer()
         }
         .frame(height: currHeight)
         .frame(maxWidth: .infinity)
@@ -86,9 +109,10 @@ struct FundSourceListView: View {
                     currHeight -= dragAmount
                 }
                 
-//                if currHeight < minHeight {
-//                    isShowing = false
-//                }
+                if currHeight < minHeight {
+                    isShowing = false
+                    currHeight = 400
+                }
                 
                 prevDragTransittion = val.translation
             }

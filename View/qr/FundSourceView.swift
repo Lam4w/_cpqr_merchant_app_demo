@@ -9,10 +9,9 @@ import SwiftUI
 import SwiftUIFontIcon
 
 struct FundSourceView: View {
-    @StateObject var qrVM = QRViewModel.shared()
+    @StateObject var qrVM = QRViewModel.shared
     @Binding var isShowing: Bool
     @State var fundSrc: FundSource = FundSource()
-    var isSelected: Bool
     
     var body: some View {
         Button {
@@ -24,12 +23,12 @@ struct FundSourceView: View {
                     HStack {
                         Image(fundSrc.image)
                             .resizable()
-                        //                                            .scaledToFit()
+//                            .scaledToFit()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 40, height: 12)
                             .padding(.horizontal, 5)
-                            .padding(.top, 3)
+                            .padding(.vertical, 5)
                     }
+                    .frame(width: 35, height: 12)
                     .padding(.vertical, 7)
                     .padding(.horizontal, 5)
                     .background(.white)
@@ -75,7 +74,6 @@ struct FundSourceView: View {
 
 struct FundSourceView_Preview: PreviewProvider {
     static var previews: some View {
-        FundSourceView(fundSrc: TagDetail(tag: "qqwe", tagDetail: "52", value: "qweqeqwe"))
-        .padding(.horizontal, 20)
+        QRView()
     }
 }
