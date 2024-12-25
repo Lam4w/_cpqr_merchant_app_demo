@@ -32,104 +32,100 @@ struct ScannerView: View {
     
     var body: some View {
         ZStack {
-            // Full-screen camera view
-            CameraView(frameSize: .zero, session: $session)
-                .ignoresSafeArea() // Camera takes up the entire screen
-                .background(Color.black) // Ensures a fallback background in case camera isn't active
-            
-            // Gray overlay
-            Color.black.opacity(0.6)
+            CameraView(frameSize: UIScreen.main.bounds.size, session: $session)
                 .ignoresSafeArea()
 
-            VStack(spacing: 8) {
-                Button {
-                    // Close button action
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+//            Color.black.opacity(0.5)
+//                .ignoresSafeArea()
+//                .overlay(
+                    VStack(spacing: 8) {
+                        Text("Quét mã QR")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .padding(.top, 20)
+                            .bold()
 
-                Text("Quét mã QR")
-                    .font(.title3)
-                    .foregroundColor(.white)
-                    .padding(.top, 20)
+                        Text("Đưa mã QR và trong khung để quét")
+                            .font(.callout)
+                            .foregroundColor(.white)
 
-                Text("Đưa mã QR và trong khung để quét")
-                    .font(.callout)
-                    .foregroundColor(.white.opacity(0.8))
+                        Spacer(minLength: 0)
 
-                Spacer(minLength: 0)
-
-                GeometryReader { geometry in
-                    let size = geometry.size
-                    ZStack {
-                        // Transparent scanner area
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.clear)
-                            .frame(width: size.width, height: size.width)
-                            .overlay(
+                        GeometryReader { geometry in
+                            let size = geometry.size
+                            ZStack {
+                                // Transparent scanner area
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.white, lineWidth: 2)
-                            )
+                                    .fill(Color.clear)
+                                    .frame(width: size.width, height: size.width)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.white, lineWidth: 3)
+                                    )
+                                // Scanner corners
+                                ForEach(0...4, id: \.self) { index in
+                                    let rotation = Double(index) * 90
+                                    RoundedRectangle(cornerRadius: 2, style: .circular)
+                                        .trim(from: 0.61, to: 0.64)
+                                        .stroke(Color.white, style: StrokeStyle(lineWidth: 7, lineCap: .round, lineJoin: .round))
+                                        .rotationEffect(.init(degrees: rotation))
+                                }
+                            }
+                            .frame(width: size.width, height: size.width)
 
-                        // Scanner corners
-                        ForEach(0...4, id: \.self) { index in
-                            let rotation = Double(index) * 90
-                            RoundedRectangle(cornerRadius: 2, style: .circular)
-                                .trim(from: 0.61, to: 0.64)
-                                .stroke(Color.white, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                                .rotationEffect(.init(degrees: rotation))
+                            // Scanning animation
+                            .overlay(alignment: .top, content: {
+                                Rectangle()
+                                    .fill(Color.white)
+                                    .frame(height: 2.5)
+                                    .shadow(color: .white.opacity(0.8), radius: 8, x: 0, y: isScanning ? 15 : -15)
+                                    .offset(y: isScanning ? size.width : 0)
+                            })
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.horizontal, 45)
+                        .padding(.bottom, 45)
+
+                        VStack {
+                            HStack(spacing: 10) {
+                                Spacer()
+                                Image("vietqr")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 35)
+                                Divider()
+                                Image("napas")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 35)
+                                    .padding(.top, 5)
+                                
+                                Spacer()
+                            }
+                            .frame(height: 30)
+
+                            Spacer()
+                        }
+                        .padding(.top, 45)
+                                        
+                        Spacer(minLength: 15)
+
+                        Button {
+                            if !session.isRunning && cameraPermission == .approved {
+                                reactivateCamera()
+                                activateScannerAnimation()
+                            }
+                        } label: {
+                            Image(systemName: "qrcode.viewfinder")
+                                .font(.largeTitle)
+                                .foregroundColor(.gray)
+                        }
+
+                        Spacer(minLength: 45)
                     }
-                    .frame(width: size.width, height: size.width)
-
-                    // Scanning animation
-                    .overlay(alignment: .top, content: {
-                        Rectangle()
-                            .fill(Color.white)
-                            .frame(height: 2.5)
-                            .shadow(color: .white.opacity(0.8), radius: 8, x: 0, y: isScanning ? 15 : -15)
-                            .offset(y: isScanning ? size.width : 0)
-                    })
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, 45)
-
-                HStack(spacing: 10) {
-                    Spacer()
-                    Image("vietqr")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 80, height: 35)
-                    Divider()
-                    Image("napas")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 80, height: 35)
-                        .padding(.top, 5)
-                    
-                    Spacer()
-                }
-                .frame(height: 30)
-
-                Spacer(minLength: 15)
-
-                Button {
-                    if !session.isRunning && cameraPermission == .approved {
-                        reactivateCamera()
-                        activateScannerAnimation()
-                    }
-                } label: {
-                    Image(systemName: "qrcode.viewfinder")
-                        .font(.largeTitle)
-                        .foregroundColor(.gray)
-                }
-
-                Spacer(minLength: 45)
-            }
-            .padding(15)
+                    .padding(15)
+//                )
+            
         }
         // Checking camera permission, when the view is visible
         .onAppear(perform: checkCameraPermisssion)
