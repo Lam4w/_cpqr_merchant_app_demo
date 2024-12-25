@@ -9,6 +9,7 @@ import SwiftUI
 import AVKit
 
 struct ScannerView: View {
+    @StateObject var checkoutVM = CheckoutViewModel.shared
     /// QR Code Scanner properties
     @State private var isScanning: Bool = false
     @State private var session: AVCaptureSession = .init()
@@ -31,37 +32,35 @@ struct ScannerView: View {
     
     var body: some View {
         VStack(spacing: 8){
-            Button{
-                
-            }label: {
-                Image(systemName: "xmark")
-                    .font(.title3)
-                    .foregroundColor(.black)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+//            Button{
+//                
+//            }label: {
+//                Image(systemName: "xmark")
+//                    .font(.title3)
+//                    .foregroundColor(.black)
+//            }
+//            .frame(maxWidth: .infinity, alignment: .leading)
             
-            Text("Place the QR code inside the area")
+            Text("Quét mã QR")
                 .font(.title3)
                 .foregroundColor(.black.opacity(0.8))
                 .padding(.top, 20)
             
-            Text("Scanning will start automatically")
+            Text("Đưa mã QR vào trong khung để quét")
                 .font(.callout)
                 .foregroundColor(.gray)
             
             Spacer(minLength: 0)
             
-            /// Scanner
+            // Scanner
             
             GeometryReader{
                 let size = $0.size
                 ZStack{
                     CameraView(frameSize: CGSize(width: size.width, height: size.width), session: $session)
-                    /// Making it little smaller
-                        .scaleEffect(0.97)
+                    
                     ForEach(0...4, id: \.self){ index in
                         let rotation = Double(index) * 90
-                        
                         RoundedRectangle(cornerRadius: 2, style: .circular)
                         /// Triming to get Scanner lik Edges
                             .trim(from: 0.61, to: 0.64)
@@ -69,9 +68,9 @@ struct ScannerView: View {
                             .rotationEffect(.init(degrees: rotation))
                     }
                 }
-                /// Square Shape
+                // Square Shape
                 .frame(width: size.width, height: size.width)
-                /// Scanner Animation
+                // Scanner Animation
                 .overlay(alignment: .top, content: {
                     Rectangle()
                         .fill(.black)
@@ -79,10 +78,27 @@ struct ScannerView: View {
                         .shadow(color: .black.opacity(0.8), radius: 8, x: 0, y: isScanning ? 15 : -15)
                         .offset(y: isScanning ? size.width: 0)
                 })
-                /// To Make it center
+                // To Make it center
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .padding(.horizontal, 45)
+                
+            HStack(spacing: 10) {
+                Spacer()
+                Image("vietqr")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 35)
+                Divider()
+                Image("napas")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 35)
+                    .padding(.top, 5)
+                
+                Spacer()
+            }
+            .frame(height: 30)
             
             Spacer(minLength: 15)
             Button{
@@ -100,10 +116,10 @@ struct ScannerView: View {
         }
         .padding(15)
         
-        /// Checking camera permission, when the view is visible
+        // Checking camera permission, when the view is visible
         .onAppear(perform: checkCameraPermisssion)
         .alert(errorMessage, isPresented: $showError){
-            /// Showing settings button, if permission is denined
+            // Showing settings button, if permission is denined
             if cameraPermission == .denied{
                 Button("Settings"){
                     let settingString = UIApplication.openSettingsURLString
@@ -113,7 +129,7 @@ struct ScannerView: View {
                     }
                 }
                 
-                /// Along with cancel button
+                // Along with cancel button
                 Button("Cancel", role: .cancel){
                 }
             }
@@ -126,13 +142,15 @@ struct ScannerView: View {
             if let code = newValue{
                 scannedCode = code
                 
-                /// When the first code scan is available, immediately stop the camera.
+                // When the first code scan is available, immediately stop the camera.
                 session.stopRunning()
                 
-                /// Stopping scanner animation
+                // Stopping scanner animation
                 deActivateScannerAnimation()
-                /// Clearing the data on delegate
+                // Clearing the data on delegate
                 qrDelegate.scannedCode = nil
+                
+                checkoutVM.handleScanResult(result: code)
             }
             
         }
@@ -144,15 +162,15 @@ struct ScannerView: View {
         }
     }
     
-    /// Activating Scanner Animation Method
+    // Activating Scanner Animation Method
     func activateScannerAnimation(){
-        /// Adding Delay for each reversal
+        // Adding Delay for each reversal
         withAnimation(.easeInOut(duration: 0.85).delay(0.1).repeatForever(autoreverses: true)){
             isScanning = true
         }
     }
     
-    /// DeActivating scanner animation method
+    // DeActivating scanner animation method
     func deActivateScannerAnimation(){
         /// Adding Delay for each reversal
         withAnimation(.easeInOut(duration: 0.85)){
@@ -161,7 +179,7 @@ struct ScannerView: View {
     }
     
     
-    /// Checking camera permission
+    // Checking camera permission
     func checkCameraPermisssion(){
         Task{
             switch AVCaptureDevice.authorizationStatus(for: .video){
@@ -184,7 +202,7 @@ struct ScannerView: View {
                     /// Permission Denied
                     cameraPermission = .denied
                     /// Presenting Erro message
-                    presentError("Please provide access to camera for scanning codes")
+                    presentError("Vui lòng cấp quyền sử dụng camera")
                     
                 }
             case .denied, .restricted:
@@ -232,7 +250,7 @@ struct ScannerView: View {
         }
     }
     
-    /// Presenting Error
+    // Presenting Error
     func presentError(_ message: String){
         errorMessage = message
         showError.toggle()

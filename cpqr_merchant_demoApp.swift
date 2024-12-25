@@ -18,6 +18,7 @@ struct cpqr_merchant_demoApp: App {
                     MainTabView()
                 } else {
                     WelcomeView()
+//                    ScannerView()
                 }
             }
         }

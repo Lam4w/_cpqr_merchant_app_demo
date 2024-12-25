@@ -97,28 +97,28 @@ struct CheckoutView: View {
             Spacer()
             //                .frame(height: 280)
             VStack{
-//                VStack {
-//                    Text("Bằng cách tiếp tục, bạn đồng ý với")
-//                        .font(.subheadline)
-//                        .foregroundColor(.gray)
-//                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-//                    
-//                    HStack{
-//                        Text("Điều khoản dịch vụ")
-//                            .font(.subheadline)
-//                            .foregroundColor(.black)
-//                        
-//                        Text("và")
-//                            .font(.subheadline)
-//                            .foregroundColor(.gray)
-//                        
-//                        Text("Chính sách bảo mật.")
-//                            .font(.subheadline)
-//                            .foregroundColor(.black)
-//                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-//                    }
-//                }
-//                .padding(.vertical, .screenWidth * 0.03)
+                //                VStack {
+                //                    Text("Bằng cách tiếp tục, bạn đồng ý với")
+                //                        .font(.subheadline)
+                //                        .foregroundColor(.gray)
+                //                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                //
+                //                    HStack{
+                //                        Text("Điều khoản dịch vụ")
+                //                            .font(.subheadline)
+                //                            .foregroundColor(.black)
+                //
+                //                        Text("và")
+                //                            .font(.subheadline)
+                //                            .foregroundColor(.gray)
+                //
+                //                        Text("Chính sách bảo mật.")
+                //                            .font(.subheadline)
+                //                            .foregroundColor(.black)
+                //                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                //                    }
+                //                }
+                //                .padding(.vertical, .screenWidth * 0.03)
                 HStack {
                     FontIcon.text(.awesome5Solid(code: .shield_alt), fontsize: 18)
                         .foregroundColor(.green)
@@ -142,7 +142,7 @@ struct CheckoutView: View {
                     } else {
                         checkoutVM.total = amount
                         checkoutVM.isShowScanner = true
-//                        checkoutVM.showTransactionConfirmation = true
+                        //                        checkoutVM.showTransactionConfirmation = true
                     }
                 }
                 .padding(.bottom, .bottomInsets + 80)
@@ -153,9 +153,13 @@ struct CheckoutView: View {
         .frame(width: .screenWidth, height: .screenHeight)
         .background(.white)
         .ignoresSafeArea(.keyboard)
-        .sheet(isPresented: $checkoutVM.isShowScanner) {
-            CodeScannerView(codeTypes: [.qr], simulatedData: "test data", completion: checkoutVM.handleScan)
-        }
+        //        .sheet(isPresented: $checkoutVM.isShowScanner) {
+        ////            CodeScannerView(codeTypes: [.qr], simulatedData: "test data", completion: checkoutVM.handleScan)
+        //            ScannerView()
+        //        }
+        .background(NavigationLink(destination: ScannerView(), isActive: $checkoutVM.isShowScanner  , label: {
+            EmptyView()
+        }) )
         .background(NavigationLink(destination: PaymentConfirmationView(), isActive: $checkoutVM.showTransactionConfirmation  , label: {
             EmptyView()
         }) )

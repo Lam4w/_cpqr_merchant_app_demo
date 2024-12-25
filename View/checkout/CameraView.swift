@@ -5,10 +5,13 @@
 //  Created by Macbook on 25/12/24.
 //
 
+import SwiftUI
+import AVKit
+
 struct CameraView: UIViewRepresentable{
     var frameSize: CGSize
     
-    /// Camera Session
+    // Camera Session
     @Binding var session: AVCaptureSession
     
     func makeUIView(context: Context) -> UIView{
