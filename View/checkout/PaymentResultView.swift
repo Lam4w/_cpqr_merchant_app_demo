@@ -27,6 +27,7 @@ struct PaymentResultView: View {
                         homeVM.selectTab = 0
                         checkoutVM.showPaymentResult = false
                         checkoutVM.showTransactionConfirmation = false
+//                        checkoutVM.isShowScanner = false
                     } label: {
                         FontIcon.text(.materialIcon(code: .home),fontsize: 25, color: .accent)
                             .padding(12)
@@ -37,7 +38,7 @@ struct PaymentResultView: View {
                 .padding(.top, 15)
                 
                 if checkoutVM.purchaseResponse?.payload.result.code == "00" {
-                    FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 60, color: .primary)
+                    FontIcon.text(.ionicon(code: .ios_done_all),fontsize: 100, color: .primary)
                         .padding(18)
                         .background(Color.mutedBackground)
                         .clipShape(.circle)
@@ -62,7 +63,7 @@ struct PaymentResultView: View {
                     }
                         .padding(.bottom, 2)
                 } else {
-                    FontIcon.text(.ionicon(code: .ios_close),fontsize: 60, color: .red)
+                    FontIcon.text(.ionicon(code: .ios_close),fontsize: 100, color: .red)
                         .padding(18)
                         .background(.ultraThinMaterial)
                         .clipShape(.circle)
@@ -152,6 +153,7 @@ struct PaymentResultView: View {
                     homeVM.selectTab = 1
                     checkoutVM.showPaymentResult = false
                     checkoutVM.showTransactionConfirmation = false
+//                    checkoutVM.isShowScanner = false
 
                 }
             }

@@ -60,8 +60,8 @@ struct MerchantServices : View {
                     
                 }) {
                     VStack(spacing: 8){
-                        FontIcon.button(.awesome5Solid(code: .qrcode), action: {
-                            
+                        FontIcon.button(.ionicon(code: .md_stats), action: {
+                            homeVM.selectTab = 3
                         },fontsize: 30)
                             .foregroundColor(.white)
                             .padding(15)
@@ -81,7 +81,6 @@ struct MerchantServices : View {
                 Button(action: {
                     
                 }) {
-                    
                     VStack(spacing: 8){
                         FontIcon.button(.ionicon(code: .ios_more), action: {},fontsize: 30)
                             .foregroundColor(.white)

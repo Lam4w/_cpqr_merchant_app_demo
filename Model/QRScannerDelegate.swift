@@ -16,17 +16,6 @@ class QRScannerDelegate: NSObject, ObservableObject, AVCaptureMetadataOutputObje
             guard let readableObject = metaObject as? AVMetadataMachineReadableCodeObject else {return}
             guard let scannedCode = readableObject.stringValue else {return}
             self.scannedCode = scannedCode
-//            let encodeUrlString = scannedCode.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-//            if let encodedString = encodeUrlString{
-//                if let url = URL(string: encodedString) {
-//                    UIApplication.shared.open(url, options: [.universalLinksOnly: false], completionHandler: {completed in
-//                        print("here")
-//                    })
-//                }else{
-//                    print("else")
-//                    print(scannedCode)
-//                }
-//            }
         }
     }
 }

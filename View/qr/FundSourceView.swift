@@ -28,7 +28,7 @@ struct FundSourceView: View {
                             .padding(.horizontal, 5)
                             .padding(.vertical, 5)
                     }
-                    .frame(width: 35, height: 12)
+                    .frame(width: 35, height: 20)
                     .padding(.vertical, 7)
                     .padding(.horizontal, 5)
                     .background(.white)
@@ -39,7 +39,8 @@ struct FundSourceView: View {
                             Text(fundSrc.type)
                                 .foregroundColor(.black)
                                 .multilineTextAlignment(.center)
-                                .font(.caption)
+                                .bold()
+//                                .font(.caption)
                             
                             Spacer()
                         }
@@ -48,7 +49,7 @@ struct FundSourceView: View {
                             Text(fundSrc.token)
                                 .foregroundColor(.black)
                                 .multilineTextAlignment(.center)
-                                .font(.caption)
+//                                .font(.caption)
                             Spacer()
                         }
                     }

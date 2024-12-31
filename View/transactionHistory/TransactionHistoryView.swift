@@ -9,60 +9,48 @@ import SwiftUI
 import SwiftUIFontIcon
 
 struct TransactionHistoryView: View {
+    @State private var isShowingTxDetails: Bool = false
+    @State private var curTx: TransactionDetails = TransactionDetails()
     @State private var searchText = ""
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                HeaderView()
-                
-                SearchBarView(searchText: $searchText)
-                    .padding(.top, 16)
-                
-                FilterView()
-                    .padding(.top, 16)
-                    .padding(.horizontal, 16)
-                
-                TransactionListView()
-                    .padding(.top, 16)
+        ZStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    HeaderView()
+                    
+                    SearchBarView(searchText: $searchText)
+                        .padding(.top, 16)
+                    
+                    FilterView()
+                        .padding(.top, 16)
+                    
+                    TransactionListView(isShowingTxDetails: $isShowingTxDetails, curTx: $curTx)
+                        .padding(.top, 16)
+                }
+                .background(Color.white)
             }
-            .background(Color.white)
-        }
-    }
-}
-
-struct StatusBarView: View {
-    var body: some View {
-        HStack {
-            Text("9:41")
-                .font(.custom("Ubuntu-Bold", size: 13))
+            .padding(.top, .topInsets)
             
-            Spacer()
-            
-            HStack(spacing: 4) {
-                AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/f5580ffafdceeae8f3fd079ec2922b6903e2c18b04d9a3bf8242356a4eb8095a?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp"))
-                    .frame(width: 17, height: 10)
-                AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/5f527610712aa27e326f8ef03c334dfac2b96b8138034f4b378c7054a0bdd2cf?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp"))
-                    .frame(width: 15, height: 10)
-                AsyncImage(url: URL(string: "https://cdn.builder.io/api/v1/image/assets/TEMP/fdaa997da4a109f30f907baa6c721a6235bb09d97a28cfe1136ff691f0d27d4b?placeholderIfAbsent=true&apiKey=3e8497d6b2d94ab5bd8e89f5d9ba1c41&format=webp"))
-                    .frame(width: 24, height: 10)
-            }
+            TransactionDetailsView(isShowing: $isShowingTxDetails, txDetails: $curTx)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 4)
     }
 }
 
 struct HeaderView: View {
+    @StateObject var homeVM = HomeViewModel.shared
     var body: some View {
         HStack {
             HStack(spacing: 6) {
-                FontIcon.button(.awesome5Solid(code: .chevron_left), action: {},fontsize: 25)
-                    .padding(12)
+                FontIcon.button(.awesome5Solid(code: .chevron_left), action: {
+                    homeVM.selectTab = 0
+                },fontsize: 25)
+                .padding(.vertical, 12)
                     .foregroundColor(.accent)
                 
                 Text("Lịch sử giao dịch")
                     .font(.title2)
+                    .padding(.horizontal, 12)
             }
             
             Spacer()
@@ -74,7 +62,7 @@ struct HeaderView: View {
                 .cornerRadius(6)
                 
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 20)
         .padding(.vertical, 8)
         .background(Color.white)
         .border(Color(red: 236/255, green: 237/255, blue: 243/255), width: 1)
@@ -97,7 +85,7 @@ struct SearchBarView: View {
                 .clipShape(.circle)
         }
         .padding(.vertical, 0)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
     }
 }
 
@@ -144,41 +132,42 @@ struct FilterView: View {
                     .foregroundColor(Color(red: 51/255, green: 51/255, blue: 51/255))
             }
         }
+        .padding(.horizontal, 20)
     }
 }
 
 struct TransactionListView: View {
+    @Binding var isShowingTxDetails: Bool
+    @Binding var curTx: TransactionDetails
+    
+    var txs = [
+        TransactionDetails(amount: "40.000", traceNo: "489234", transDate: "12/12/24 10:45 AM", status: "Pending"),
+        TransactionDetails(amount: "50.000", traceNo: "489236", transDate: "12/12/24 09:20 AM", status: "Success"),
+        TransactionDetails(amount: "60.000", traceNo: "489236", transDate: "13/12/24 02:05 PM", status: "Success"),
+        TransactionDetails(amount: "70.000", traceNo: "489237", transDate: "13/12/24 04:00 PM", status: "Failed"),
+        TransactionDetails(amount: "45.000", traceNo: "489238", transDate: "13/12/24 09:04 PM", status: "Success"),
+        TransactionDetails(amount: "80.000", traceNo: "489239", transDate: "14/12/24 09:12 AM", status: "Failed"),
+        TransactionDetails(amount: "95.000", traceNo: "489240", transDate: "16/12/24 11:15 AM", status: "Success")
+    ]
+    
     var body: some View {
         VStack(spacing: 18) {
-            ForEach(0..<2) { _ in
-                TransactionItemView()
-            }
+            ForEach(txs , id: \.id, content: {
+                txObj in
+                TransactionHistoryRow(isShowingTxDetails: $isShowingTxDetails, curTx: $curTx, txDetails: txObj)
+            })
         }
         .padding(.horizontal, 16)
     }
 }
 
-struct TransactionItemView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            ForEach(0..<3) { index in
-                TransactionHistoryRow(
-                    name: ["Đơn hàng #2211312326", "Đơn hàng #2211312325", "Đơn hàng #2211312324"][index],
-                    status: ["Success", "Pending", "Failed"][index],
-                    amount: ["30.000", "40.000", "40.000"][index]
-                )
-            }
-        }
-    }
-}
-
 struct TransactionHistoryRow: View {
-    let name: String
-    let status: String
-    let amount: String
+    @Binding var isShowingTxDetails: Bool
+    @Binding var curTx: TransactionDetails
+    @State var txDetails: TransactionDetails = TransactionDetails()
     
     var statusColor: Color {
-        switch status {
+        switch txDetails.status {
             case "Success": return Color(hex: "32A64D")
             case "Pending": return Color(hex: "E4AC04")
             case "Failed": return Color(hex: "EE4540")
@@ -187,40 +176,54 @@ struct TransactionHistoryRow: View {
     }
     
     var body: some View {
-        HStack(spacing: 8) {
+        Button {
+            isShowingTxDetails = true
+            curTx = txDetails
+        } label: {
             HStack(spacing: 8) {
-                VStack {
-                    Text("01")
-                        .font(.custom("Ubuntu-Bold", size: 17))
-                    Text("Dec")
-                        .font(.custom("Ubuntu-Regular", size: 10))
-                        .padding(.top, 4)
+                HStack(spacing: 8) {
+                    VStack {
+                        Text("01")
+                            .font(.custom("Ubuntu-Bold", size: 17))
+                        Text("Dec")
+                            .font(.custom("Ubuntu-Regular", size: 10))
+                            .padding(.top, 4)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 5)
+                    .background(Color(red: 240/255, green: 242/255, blue: 245/255))
+                    .cornerRadius(8)
+                    
+                    VStack(alignment: .leading) {
+                        Text("ID: \(txDetails.traceNo)")
+                            
+                        HStack {
+                            Text("Trạng thái: ")
+                            
+                            Text(txDetails.status)
+                                .foregroundColor(statusColor)
+                            
+                            Spacer()
+                        }
+                        .font(.subheadline)
+                        
+                    }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 5)
-                .background(Color(red: 240/255, green: 242/255, blue: 245/255))
-                .cornerRadius(8)
                 
-                VStack(alignment: .leading) {
-                    Text(name)
-                        .font(.custom("Ubuntu-Bold", size: 14))
-                    Text(status)
-                        .foregroundColor(statusColor)
+                Spacer()
+                
+                HStack(spacing: 4) {
+                    Text("\(txDetails.amount) đ")
+                        .font(.custom("Ubuntu-Bold", size: 15))
+                    
+                    FontIcon.button(.ionicon(code: .md_return_left), action: {}, fontsize: 15)
                 }
-            }
-            
-            Spacer()
-            
-            HStack(spacing: 4) {
-                Text("\(amount) đ")
-                    .font(.custom("Ubuntu-Bold", size: 15))
                 
-                FontIcon.button(.ionicon(code: .md_return_left), action: {}, fontsize: 15)
+                Divider()
+                    .background(Color(red: 240/255, green: 242/255, blue: 245/255))
             }
-            
-            Divider()
-                .background(Color(red: 240/255, green: 242/255, blue: 245/255))
         }
+        .foregroundColor(.black)
     }
 }
 

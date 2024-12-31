@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import SwiftUIFontIcon
 
 struct ScannerView: View {
     @StateObject var checkoutVM = CheckoutViewModel.shared
@@ -26,7 +27,6 @@ struct ScannerView: View {
     /// Camera QR Output delegate
     @StateObject private var qrDelegate = QRScannerDelegate()
     
-    
     /// Scanned code
     @State private var scannedCode: String = ""
     
@@ -34,97 +34,113 @@ struct ScannerView: View {
         ZStack {
             CameraView(frameSize: UIScreen.main.bounds.size, session: $session)
                 .ignoresSafeArea()
-
-//            Color.black.opacity(0.5)
-//                .ignoresSafeArea()
-//                .overlay(
-                    VStack(spacing: 8) {
-                        Text("Quét mã QR")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .padding(.top, 20)
-                            .bold()
-
-                        Text("Đưa mã QR và trong khung để quét")
-                            .font(.callout)
-                            .foregroundColor(.white)
-
-                        Spacer(minLength: 0)
-
-                        GeometryReader { geometry in
-                            let size = geometry.size
-                            ZStack {
-                                // Transparent scanner area
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.clear)
-                                    .frame(width: size.width, height: size.width)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.white, lineWidth: 3)
-                                    )
-                                // Scanner corners
-                                ForEach(0...4, id: \.self) { index in
-                                    let rotation = Double(index) * 90
-                                    RoundedRectangle(cornerRadius: 2, style: .circular)
-                                        .trim(from: 0.61, to: 0.64)
-                                        .stroke(Color.white, style: StrokeStyle(lineWidth: 7, lineCap: .round, lineJoin: .round))
-                                        .rotationEffect(.init(degrees: rotation))
-                                }
-                            }
-                            .frame(width: size.width, height: size.width)
-
-                            // Scanning animation
-                            .overlay(alignment: .top, content: {
-                                Rectangle()
-                                    .fill(Color.white)
-                                    .frame(height: 2.5)
-                                    .shadow(color: .white.opacity(0.8), radius: 8, x: 0, y: isScanning ? 15 : -15)
-                                    .offset(y: isScanning ? size.width : 0)
-                            })
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.horizontal, 45)
-                        .padding(.bottom, 45)
-
-                        VStack {
-                            HStack(spacing: 10) {
-                                Spacer()
-                                Image("vietqr")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 35)
-                                Divider()
-                                Image("napas")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 35)
-                                    .padding(.top, 5)
-                                
-                                Spacer()
-                            }
-                            .frame(height: 30)
-
-                            Spacer()
-                        }
-                        .padding(.top, 45)
-                                        
-                        Spacer(minLength: 15)
-
-                        Button {
-                            if !session.isRunning && cameraPermission == .approved {
-                                reactivateCamera()
-                                activateScannerAnimation()
-                            }
-                        } label: {
-                            Image(systemName: "qrcode.viewfinder")
-                                .font(.largeTitle)
-                                .foregroundColor(.gray)
-                        }
-
-                        Spacer(minLength: 45)
+            
+            Rectangle()
+                .fill(.black.opacity(0.3))
+                .ignoresSafeArea()
+            
+            VStack(spacing: 8) {
+                HStack {
+                    Button {
+                        checkoutVM.isShowScanner = false
+                    } label: {
+                        FontIcon.text(.awesome5Solid(code: .chevron_left),fontsize: 25, color: .white)
                     }
-                    .padding(15)
-//                )
+                    
+                    Spacer()
+                }
+                .padding(10)
+                
+                Text("Quét mã QR")
+                    .font(.title3)
+                    .foregroundColor(.white)
+                    .padding(.top, 20)
+                    .bold()
+
+                Text("Đưa mã QR và trong khung để quét")
+                    .font(.callout)
+                    .foregroundColor(.white)
+
+                Spacer(minLength: 0)
+
+                GeometryReader { geometry in
+                    let size = geometry.size
+                    ZStack {
+                        // Transparent scanner area
+                        RoundedRectangle(cornerRadius: 10)
+                            .blendMode(.destinationOut)
+//                            .fill(Color.clear)
+                            .frame(width: size.width, height: size.width)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+//                                    .blendMode(.destinationOut)
+                                    .stroke(Color.white, lineWidth: 3)
+                            )
+                        // Scanner corners
+                        ForEach(0...4, id: \.self) { index in
+                            let rotation = Double(index) * 90
+                            RoundedRectangle(cornerRadius: 2, style: .circular)
+                                .trim(from: 0.61, to: 0.64)
+                                .stroke(Color.white, style: StrokeStyle(lineWidth: 7, lineCap: .round, lineJoin: .round))
+                                .rotationEffect(.init(degrees: rotation))
+                        }
+                    }
+                    .frame(width: size.width, height: size.width)
+
+                    // Scanning animation
+                    .overlay(alignment: .top, content: {
+                        Rectangle()
+                            .fill(Color.white)
+                            .frame(height: 2.5)
+                            .shadow(color: .white.opacity(0.8), radius: 8, x: 0, y: isScanning ? 15 : -15)
+                            .offset(y: isScanning ? size.width : 0)
+                    })
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 45)
+//                .padding(.bottom, 45)
+                
+                Spacer(minLength: 0)
+
+                VStack {
+                    HStack(spacing: 10) {
+                        Spacer()
+                        Image("vietqr")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 35)
+                        Divider()
+                        Image("napas")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 35)
+                            .padding(.top, 5)
+                        
+                        Spacer()
+                    }
+                    .frame(height: 30)
+                    .padding(.top, 40)
+                    
+                    Spacer()
+                }
+                                
+                Spacer(minLength: 15)
+
+                Button {
+                    if !session.isRunning && cameraPermission == .approved {
+                        reactivateCamera()
+                        activateScannerAnimation()
+                    }
+                } label: {
+                    Image(systemName: "qrcode.viewfinder")
+                        .font(.largeTitle)
+                        .foregroundColor(.gray)
+                }
+
+                Spacer(minLength: 45)
+            }
+            .padding(15)
+//            .padding(.top, .topInsets)
             
         }
         // Checking camera permission, when the view is visible
@@ -144,13 +160,13 @@ struct ScannerView: View {
                 Button("Cancel", role: .cancel){
                 }
             }
-            
         }
         .onDisappear{
             session.stopRunning()
         }
         .onChange(of: qrDelegate.scannedCode){ newValue in
             if let code = newValue{
+                checkoutVM.handleScanResult(result: code)
                 scannedCode = code
                 
                 // When the first code scan is available, immediately stop the camera.
@@ -159,12 +175,13 @@ struct ScannerView: View {
                 // Stopping scanner animation
                 deActivateScannerAnimation()
                 // Clearing the data on delegate
-                qrDelegate.scannedCode = nil
                 
-                checkoutVM.handleScanResult(result: code)
+//                qrDelegate.scannedCode = nil
             }
-            
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
+        .ignoresSafeArea()
     }
     
     func reactivateCamera(){

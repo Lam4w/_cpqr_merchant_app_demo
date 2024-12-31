@@ -142,7 +142,6 @@ struct CheckoutView: View {
                     } else {
                         checkoutVM.total = amount
                         checkoutVM.isShowScanner = true
-                        //                        checkoutVM.showTransactionConfirmation = true
                     }
                 }
                 .padding(.bottom, .bottomInsets + 80)
@@ -153,13 +152,13 @@ struct CheckoutView: View {
         .frame(width: .screenWidth, height: .screenHeight)
         .background(.white)
         .ignoresSafeArea(.keyboard)
-        //        .sheet(isPresented: $checkoutVM.isShowScanner) {
-        ////            CodeScannerView(codeTypes: [.qr], simulatedData: "test data", completion: checkoutVM.handleScan)
-        //            ScannerView()
-        //        }
-        .background(NavigationLink(destination: ScannerView(), isActive: $checkoutVM.isShowScanner  , label: {
-            EmptyView()
-        }) )
+        .sheet(isPresented: $checkoutVM.isShowScanner) {
+//            CodeScannerView(codeTypes: [.qr], simulatedData: "test data", completion: checkoutVM.handleScan)
+            ScannerView()
+        }
+//        .background(NavigationLink(destination: ScannerView(), isActive: $checkoutVM.isShowScanner  , label: {
+//            EmptyView()
+//        }) )
         .background(NavigationLink(destination: PaymentConfirmationView(), isActive: $checkoutVM.showTransactionConfirmation  , label: {
             EmptyView()
         }) )

@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftUIFontIcon
 
 struct MerchantTransactionListView: View {
+    @StateObject var homeVM: HomeViewModel = HomeViewModel.shared
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -19,7 +20,9 @@ struct MerchantTransactionListView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
+                Button(action: {
+                    homeVM.selectTab = 3
+                }) {
                     HStack {
                         Text("Xem tất cả")
                             .foregroundColor(.accent)

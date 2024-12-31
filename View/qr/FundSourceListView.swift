@@ -11,10 +11,10 @@ import SwiftUIFontIcon
 struct FundSourceListView: View {
     @Binding var isShowing: Bool
     @StateObject var qrVM = QRViewModel.shared
-    @State private var currHeight: CGFloat = 450
+    @State private var currHeight: CGFloat = 650
     
-    let minHeight: CGFloat = 400
-    let maxHeight: CGFloat = 650
+    let minHeight: CGFloat = 500
+    let maxHeight: CGFloat = 750
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -81,7 +81,7 @@ struct FundSourceListView: View {
                     .padding(.vertical, 17)
                 }
             }
-            .frame(maxHeight: .infinity)
+//            .frame(maxHeight: .infinity)
             
             Spacer()
         }
